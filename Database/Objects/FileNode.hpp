@@ -11,8 +11,7 @@ public:
 		filename(fn), timestamp(std::time(nullptr)) {} 
 	
 	//Filename string should be dynamically allocated at runtime so memory should be freed when file is removed from Database
-	~FileNode() {
-		delete[] filename; 
+	~FileNode() { 
 	}
 
 	//Return the pointer to the filename
@@ -50,4 +49,4 @@ private:
 	char* filename;
 	std::time_t timestamp;
 };
-#endif _FILENODE_H_
+#endif
