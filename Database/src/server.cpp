@@ -1,5 +1,8 @@
 #include "../include/crow_all.h"
 #include <iostream>
+#include <sstream>
+#include <fstream>
+#include <string>
 
 int main()
 {
@@ -8,11 +11,20 @@ int main()
     auto &cors = app.get_middleware<crow::CORSHandler>();
     cors.global().allow_credentials().origin("http://localhost:5173");
     CROW_ROUTE(app, "/api/rest/v1/test")
-    ([]()
+    ([](const crow::request &req, crow::response &res)
      {
-        crow::json::wvalue x = {{"a", 1}, {"b", 2}};
-        std::cout << "REQUESTED home route" << std::endl;
-        return x; });
+        std::ifstream file("../data/test.json");
+        std::string str;
+
+        if (file)
+        {
+            std::ostringstream ss;
+            ss << file.rdbuf();
+            str = ss.str();
+        }
+        res.set_header("Content-Type", "application/json");
+        res.write(str);
+        res.end(); });
 
     app.port(18080).multithreaded().run();
 
