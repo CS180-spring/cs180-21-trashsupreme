@@ -52,3 +52,5 @@ Trash_Bin/.vscode
 *.njsproj
 *.sln
 *.sw*
+.vscode/tasks.json
+Objects/TreeNode.cpp
