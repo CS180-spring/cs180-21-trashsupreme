@@ -9,8 +9,8 @@ int main()
 
     crow::App<crow::CORSHandler> app;
     auto &cors = app.get_middleware<crow::CORSHandler>();
-    cors.global().allow_credentials().origin("http://localhost:5173");
-    CROW_ROUTE(app, "/api/rest/v1/test")
+    cors.global().allow_credentials().origin("http://localhost:8080");
+    CROW_ROUTE(app, "/api/rest/v1/json/test")
     ([](const crow::request &req, crow::response &res)
      {
         std::ifstream file("../data/test.json");
