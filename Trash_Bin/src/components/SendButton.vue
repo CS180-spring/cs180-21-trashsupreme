@@ -1,8 +1,9 @@
 <script lang="ts">
-var url = "http://localhost:18080/api/rest/v1/test";
+var url = "http://localhost:18080/api/rest/v1/json/test";
 export default {
   methods: {
     async handleClick() {
+      console.log("test");
       const response = await fetch(url);
       // const text = await response.text();
       // console.log(text);
