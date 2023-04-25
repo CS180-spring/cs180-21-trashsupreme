@@ -52,3 +52,4 @@ Trash_Bin/.vscode
 *.njsproj
 *.sln
 *.sw*
+.vscode/settings.json
