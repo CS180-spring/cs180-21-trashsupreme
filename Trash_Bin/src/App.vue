@@ -1,47 +1,42 @@
-<script setup lang="ts">
-import HelloWorld from './components/HelloWorld.vue'
-import TheWelcome from './components/TheWelcome.vue'
+<script lang="ts">
+import NavBar from './components/NavBar.vue'
+import Login from './components/Login.vue'
+import Search from './components/Search.vue'
+import MyFiles from './components/MyFiles.vue'
+//let asdf: String[] = ["Button 1", "Button 2"]
+export default {
+  components: {
+    NavBar,
+    Login,
+    Search,
+    MyFiles
+  },
+  data() {return {
+    menus: ["Login", "My Files", "Search"],
+    currentMenu: "Login"
+  }},
+  methods: {
+    changeMenu(currentLabel: string) {
+      this.currentMenu = currentLabel
+    }
+  }
+}
 </script>
 
 <template>
   <header>
-    <img alt="Vue logo" class="logo" src="./assets/logo.svg" width="125" height="125" />
-
-    <div class="wrapper">
-      <HelloWorld msg="You did it!" />
-    </div>
+  
   </header>
 
   <main>
-    <TheWelcome />
+    <h1>App</h1>
+    <NavBar :labels="menus" @click="changeMenu" />
+    <Login v-if="currentMenu === 'Login'" />
+    <Search v-if="currentMenu === 'Search'" />
+    <MyFiles v-if="currentMenu === 'My Files'" />
   </main>
 </template>
 
 <style scoped>
-header {
-  line-height: 1.5;
-}
 
-.logo {
-  display: block;
-  margin: 0 auto 2rem;
-}
-
-@media (min-width: 1024px) {
-  header {
-    display: flex;
-    place-items: center;
-    padding-right: calc(var(--section-gap) / 2);
-  }
-
-  .logo {
-    margin: 0 2rem 0 0;
-  }
-
-  header .wrapper {
-    display: flex;
-    place-items: flex-start;
-    flex-wrap: wrap;
-  }
-}
 </style>
