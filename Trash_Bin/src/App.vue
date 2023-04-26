@@ -11,7 +11,8 @@ export default {
     NavBar,
     Login,
     Search,
-    MyFiles
+    MyFiles,
+    SendButton
   },
   data() {return {
     menus: ["Login", "My Files", "Search"],
