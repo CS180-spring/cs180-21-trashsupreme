@@ -1,15 +1,18 @@
+
 <script lang="ts">
 import NavBar from './components/NavBar.vue'
 import Login from './components/Login.vue'
 import Search from './components/Search.vue'
 import MyFiles from './components/MyFiles.vue'
+import SendButton from './components/SendButton.vue'
 //let asdf: String[] = ["Button 1", "Button 2"]
 export default {
   components: {
     NavBar,
     Login,
     Search,
-    MyFiles
+    MyFiles,
+    SendButton
   },
   data() {return {
     menus: ["Login", "My Files", "Search"],
@@ -34,7 +37,12 @@ export default {
     <Login v-if="currentMenu === 'Login'" />
     <Search v-if="currentMenu === 'Search'" />
     <MyFiles v-if="currentMenu === 'My Files'" />
+    
   </main>
+  <div id="test">
+      <SendButton />
+      <img alt="Vue logo" class="logo" src="./assets/logo.svg" width="125" height="125" />
+    </div>
 </template>
 
 <style scoped>
