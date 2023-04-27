@@ -4,6 +4,7 @@
 #include <ctime>
 #include <chrono>
 #include <iostream>
+#include <cstring>
 
 class FileNode {
 public:
@@ -24,6 +25,15 @@ public:
 	std::time_t get_Timestamp() {
 		return timestamp;
 	}
+
+	//Returns the file extension of the file's name (.txt, .pdf, etc...)
+	char* get_fileExtension() {
+      char* substr = this->filename;
+      char* extension;
+      extension = strchr(substr, '.');
+
+      return extension;
+    }
 
 	//Print Filename and Date in Local Calendar Format
 	void printFile() {

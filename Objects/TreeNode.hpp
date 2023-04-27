@@ -2,6 +2,7 @@
 #define _TREENODE_H_
 
 #include <vector>
+#include <cstring>
 #include "FileNode.hpp"
 
 class TreeNode {
@@ -24,6 +25,13 @@ class TreeNode {
     //Returns the file's filetype (ex: png, txt, pdf, etc.)
     char* get_Filetype() {
       return filetype;
+    }
+
+    void findFileTypeIndex(char* name) {
+      char* output = NULL;
+      char* period = (char*)".";
+      output = strstr(name, output);
+      if(output != NULL) { std::cout << "Substring found: " << output << std::endl; }
     }
 
     //Determines if a particular file's name and type already exists among the children of a filetype node.
