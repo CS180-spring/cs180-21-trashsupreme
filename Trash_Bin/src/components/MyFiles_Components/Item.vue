@@ -1,7 +1,7 @@
 <script lang="ts">
 import { defineComponent } from 'vue';
 import {Types} from '../../types'
-import DeleteButton from './DeleteButton.vue'
+import DeleteButton from '../General_Components/DeleteButton.vue'
     export default defineComponent ({
         props: {
             item: Types.Item
