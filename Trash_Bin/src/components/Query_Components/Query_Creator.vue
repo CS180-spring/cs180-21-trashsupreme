@@ -28,8 +28,12 @@ import {Types} from '../../types'
             },
             submit() {
                 let query:{}[] = []
-                this.selected.forEach((value, key) => {
-                    query.push({key: key, value: value})
+                this.keys.forEach((key) => {
+                    if (this.selected.get(key) != null) {
+                        query.push({key: key, value: this.selected.get(key)})
+                    } else {
+                        query.push({key: key, value: ""})
+                    }
                 })
                 console.log(query)
             }
