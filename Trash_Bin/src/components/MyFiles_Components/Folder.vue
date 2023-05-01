@@ -3,7 +3,7 @@ import { defineComponent } from 'vue';
 import {Types} from '../../types'
 import Item from './Item.vue'
 import DeleteButton from '../General_Components/DeleteButton.vue'
-import AddButton from './AddButton.vue'
+import AddButton from '../General_Components/AddButton.vue';
     export default defineComponent ({
         props: {
             folder: Types.Folder

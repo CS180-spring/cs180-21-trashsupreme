@@ -27,15 +27,21 @@ import {Types} from '../../types'
                 }
             },
             submit() {
-                let query:{}[] = []
+                let query:{key: string, value: string}[] = []
                 this.keys.forEach((key) => {
                     if (this.selected.get(key) != null) {
                         query.push({key: key, value: this.selected.get(key)})
                     } else {
-                        query.push({key: key, value: ""})
+                        //query.push({key: key, value: ""})
                     }
                 })
                 console.log(query)
+                let url = "http://localhost:18080/api/rest/v1/json/query?"
+                query.forEach((item) => {
+                    url += item.key + "=" + item.value + "&"
+                })
+                url = url.slice(0, url.length - 1)
+                console.log(url)
             }
         }
     })
