@@ -1,33 +1,31 @@
 #ifndef _FILENODE_H_
 #define _FILENODE_H_
 
+#include "json.hpp"
+#include <iostream>
 #include <ctime>
 #include <chrono>
-#include <iostream>
-#include <cstring>
+#include <cassert>
+#include <unordered_map>
 
-class FileNode {
-public:
-	FileNode(char* fn) : //Receive pointer to filename string
-		//Store filename and retrieve timestamp as time since Epoch (Avoid locality time differences)
-		filename(fn), timestamp(std::chrono::system_clock::to_time_t(std::chrono::system_clock::now())) {} 
+using namespace std;
+using json = nlohmann::json;
 
-	//Filename string should be dynamically allocated at runtime so memory should be freed when file is removed from Database
-	~FileNode() { 
-	}
+namespace file {
+  class fileNode {
+    public:
+    //Test Constructor where all variables are declared by user
+    fileNode(char* fn, char* type, char* ID) : filename(fn), filetype(type), docID(ID), timestamp(std::chrono::system_clock::to_time_t(std::chrono::system_clock::now())) {}
 
-	//Return the pointer to the filename
-	char* get_Filename() {
-		return filename;
-	}
+    //Main constructor which creates filetype without explicitly declaring it
+    fileNode(char* fn, char* ID) : filename(fn), filetype(strchr(filename, '.')), docID(ID), timestamp(std::chrono::system_clock::to_time_t(std::chrono::system_clock::now())) {}
+    ~fileNode() {}
 
-	//Return time since last Epoch
-	std::time_t get_Timestamp() {
-		return timestamp;
-	}
+    char* get_filename() {
+      return filename;
+    }
 
-	//Returns the file extension of the file's name (.txt, .pdf, etc...)
-	char* get_fileExtension() {
+    char* get_fileExtension() {
       char* substr = this->filename;
       char* extension;
       extension = strchr(substr, '.');
@@ -35,23 +33,38 @@ public:
       return extension;
     }
 
-	//Print Filename and Date in Local Calendar Format
-	void printFile() {
-		std::cout << "File Name: " << filename
+		char* get_docID() {
+			return docID;
+		}
+
+    void updateFilename(char* fn) {
+		  filename = fn;
+      filename_string = (char*)filename;
+		  timestamp = std::chrono::system_clock::to_time_t(std::chrono::system_clock::now());
+	  }
+
+    void printFile() {
+		  std::cout << "File Name: " << filename
 			<< "\nDate Last Updated: " << std::asctime(std::localtime(&timestamp)) << std::endl;
-	}
+	  }
 
-	//Change Filename to provided Filename and print status of update
-	//Currently assumes file extension is passed as part of file name string so no parsing occurs here)
-	//Updates timestamp once update completes
-	void updateFilename(char* fn) {
-		filename = fn;
-		timestamp = std::chrono::system_clock::to_time_t(std::chrono::system_clock::now());
-	}
+    char* filename;
+    std::string filename_string = (char*)filename; //overloaded char* to string to be compatible with JSON functions below
+    char* filetype;
+    std::string filetype_string = (char*)filetype; //overloaded char* to string to be compatible with JSON functions below
+    char* docID;
+    std::string docID_string = (char*)docID; //overloaded char* to string to be compatible with JSON functions below
+    std::time_t timestamp;
+  };
+    void to_json(json& j, const fileNode& p) {
+        j = json{ {"filename", p.filename}, {"filetype", p.filetype}, {"docID", p.docID}, {"timestamp", p.timestamp} };
+    }
 
-
-private:
-	char* filename;
-	std::time_t timestamp;
-};
+    void from_json(const json& j, fileNode& p) {
+        j.at("filename").get_to(p.filename_string);
+        j.at("filetype").get_to(p.filetype_string);
+        j.at("docID").get_to(p.docID_string);
+        j.at("timestamp").get_to(p.timestamp);
+    }
+}
 #endif

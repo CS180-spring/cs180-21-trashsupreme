@@ -11,7 +11,7 @@ class FileTree {
     /*Constructs a FileTree whose name is based on the filetype of the referenced FileNode 
     Example: a file with filename "Words.txt" passed into the constructor will create a FileTree
     whose name is ".txt" */
-    FileTree(FileNode* f) {
+    FileTree(file::fileNode* f) {
       name = f->get_fileExtension();
     }
 
@@ -22,7 +22,7 @@ class FileTree {
     }
 
     //Function which will add a file to the FileTree object's fileMap
-    void filemap_add(char* filename, FileNode* child) {
+    void filemap_add(char* filename, file::fileNode* child) {
       fileMap.insert(std::make_pair(filename, child));
     }
 
@@ -35,8 +35,8 @@ class FileTree {
     void find_key(char* key) {
       const auto& keys = fileMap; //auto which will search the fileMap
       if(keys.find(key) != keys.end()) {
-        FileNode* mapData = keys.at(key);
-        std::cout << "File " << mapData->get_Filename() << " exists!" << std::endl;
+        file::fileNode* mapData = keys.at(key);
+        std::cout << "File " << mapData->get_filename() << " exists!" << std::endl;
       }
       else {
         std::cout << "File " << key << " doesn't exist!" << std::endl;
@@ -45,7 +45,7 @@ class FileTree {
 
   private:
     char* name;
-    std::unordered_map<char*, FileNode*> fileMap;
+    std::unordered_map<char*, file::fileNode*> fileMap;
 };
 
 #endif 

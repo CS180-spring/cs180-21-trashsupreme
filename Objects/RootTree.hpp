@@ -4,7 +4,6 @@
 #include <vector>
 #include <unordered_map>
 #include <utility>
-#include "TreeNode.hpp"
 #include "FileTree.hpp"
 
 class RootTree {

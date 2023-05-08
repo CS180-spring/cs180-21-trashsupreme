@@ -55,5 +55,7 @@ Trash_Bin/.vscode
 .vscode/tasks.json
 Objects/TreeNode.cpp
 Objects/TreeNode.hpp
-Objects/FileTree.cpp
-Objects/RootTree.cpp
+Objects/fntest.hpp
+Tests/TreeNodeTest.hpp
+Tests/unitTest.cpp
+
