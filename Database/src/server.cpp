@@ -6,6 +6,8 @@
 #include <vector>
 #include <utility>
 #include "../include/json.hpp"
+#include "../Objects/FileTree.hpp"
+#include "../Objects/FileNode.hpp"
 
 using json = nlohmann::json;
 
@@ -29,6 +31,11 @@ std::vector<std::string> split(std::string s, std::string delimiter)
 
 int main()
 {
+
+    file::fileNode *file = new file::fileNode((char *)"root.txt", (char *)"0");
+
+    FileTree *tree = new FileTree(file);
+    tree->filemap_add(file->get_filename(), file);
 
     crow::App<crow::CORSHandler> app;
     auto &cors = app.get_middleware<crow::CORSHandler>();
@@ -69,6 +76,29 @@ int main()
         res.write(to_string(j));
         res.end(); });
 
+    CROW_ROUTE(app, "/api/rest/v1/json/add/<string>/<string>")
+    ([&](const crow::request &req, crow::response &res, std::string doc_id, std::string query)
+     {
+        file::fileNode* new_file = new file::fileNode((char*)query.c_str(), (char*)doc_id.c_str());
+        tree->filemap_add(new_file->get_filename(), new_file);
+        std::ifstream file("/project/data/test.json");
+        // std::string str;
+
+        // std::vector<std::string> vec = split(query, "&");
+        // std::vector<std::string> temp;
+
+        // json j;
+        // for(int i = 0; i < vec.size(); i++) {
+        //     temp = split(vec.at(i), "=");
+        //     j[temp.at(0)] = temp.at(1);
+        // }
+        
+
+        json j;
+        j["response"] = "Success";
+        res.write(to_string(j));
+        res.end(); });
+
     CROW_ROUTE(app, "/api/rest/v1/json/update/<int>/<string>")
     ([](const crow::request &req, crow::response &res, int doc_id, std::string new_doc)
      {
@@ -78,9 +108,10 @@ int main()
         res.write(to_string(j));
         res.end(); });
 
-    CROW_ROUTE(app, "/api/rest/v1/json/delete/<int>")
-    ([](const crow::request &req, crow::response &res, int doc_id)
+    CROW_ROUTE(app, "/api/rest/v1/json/delete/<string>")
+    ([&](const crow::request &req, crow::response &res, std::string doc_id)
      {
+        tree->filemap_remove((char*)doc_id.c_str());
         std::cout << "Deleting document " << doc_id << '\n';
 
         json j;
