@@ -36,9 +36,9 @@ import {Types} from '../../types'
                     }
                 })
                 console.log(query)
-                let url = "http://localhost:18080/api/rest/v1/json/query?"
+                let url = "http://localhost:18080/api/rest/v1/json/query/"
                 query.forEach((item) => {
-                    url += item.key + "=" + item.value + "/"
+                    url += item.key + "=" + item.value + "&"
                 })
                 url = url.slice(0, url.length - 1)
                 console.log(url)
