@@ -11,60 +11,73 @@
 using namespace std;
 using json = nlohmann::json;
 
-namespace file {
-  class fileNode {
-    public:
-    //Test Constructor where all variables are declared by user
-    fileNode(char* fn, char* type, char* ID) : filename(fn), filetype(type), docID(ID), timestamp(std::chrono::system_clock::to_time_t(std::chrono::system_clock::now())) {}
+namespace file
+{
+  class fileNode
+  {
+  public:
+    // Test Constructor where all variables are declared by user
+    fileNode(std::string fn, std::string type, std::string ID) : filename(fn), filetype(type), docID(ID), timestamp(std::chrono::system_clock::to_time_t(std::chrono::system_clock::now())) {}
 
-    //Main constructor which creates filetype without explicitly declaring it
-    fileNode(char* fn, char* ID) : filename(fn), filetype(strchr(filename, '.')), docID(ID), timestamp(std::chrono::system_clock::to_time_t(std::chrono::system_clock::now())) {}
+    // Main constructor which creates filetype without explicitly declaring it
+    fileNode(std::string fn, std::string ID) : filename(fn), filetype(filename.substr(filename.find(".") + 1)), docID(ID), timestamp(std::chrono::system_clock::to_time_t(std::chrono::system_clock::now())) {}
     ~fileNode() {}
 
-    char* get_filename() {
+    std::string get_filename()
+    {
       return filename;
     }
 
-    char* get_fileExtension() {
-      char* substr = this->filename;
-      char* extension;
-      extension = strchr(substr, '.');
+    std::string get_fileExtension()
+    {
+      std::string substring = this->filename;
+      std::string extension;
+      // extension = strchr(substr, '.');
+      extension = substring.substr(substring.find(".") + 1);
 
       return extension;
     }
 
-		char* get_docID() {
-			return docID;
-		}
+    std::string get_docID()
+    {
+      return docID;
+    }
 
-    void updateFilename(char* fn) {
-		  filename = fn;
-      filename_string = (char*)filename;
-		  timestamp = std::chrono::system_clock::to_time_t(std::chrono::system_clock::now());
-	  }
+    void updateFilename(std::string fn)
+    {
+      filename = fn;
+      // filename_string = (std::string)filename;
+      timestamp = std::chrono::system_clock::to_time_t(std::chrono::system_clock::now());
+    }
 
-    void printFile() {
-		  std::cout << "File Name: " << filename
-			<< "\nDate Last Updated: " << std::asctime(std::localtime(&timestamp)) << std::endl;
-	  }
+    void printFile()
+    {
+      std::cout << "File Name: " << filename
+                << "\nDate Last Updated: " << std::asctime(std::localtime(&timestamp)) << std::endl;
+    }
 
-    char* filename;
-    std::string filename_string = (char*)filename; //overloaded char* to string to be compatible with JSON functions below
-    char* filetype;
-    std::string filetype_string = (char*)filetype; //overloaded char* to string to be compatible with JSON functions below
-    char* docID;
-    std::string docID_string = (char*)docID; //overloaded char* to string to be compatible with JSON functions below
+    std::string filename;
+    // std::string filename_string = (std::string)filename; // overloaded char* to string to be compatible with JSON functions below
+    std::string filetype;
+    // std::string filetype_string = (std::string)filetype; // overloaded char* to string to be compatible with JSON functions below
+    std::string docID;
+    // std::string docID_string = (std::string)docID; // overloaded char* to string to be compatible with JSON functions below
+    std::string path;
+    // std::string path_string = (std::string)path;
     std::time_t timestamp;
   };
-    void to_json(json& j, const fileNode& p) {
-        j = json{ {"filename", p.filename}, {"filetype", p.filetype}, {"docID", p.docID}, {"timestamp", p.timestamp} };
-    }
+  void to_json(json &j, const fileNode &p)
+  {
+    j = json{{"filename", p.filename}, {"filetype", p.filetype}, {"docID", p.docID}, {"timestamp", p.timestamp}};
+  }
 
-    void from_json(const json& j, fileNode& p) {
-        j.at("filename").get_to(p.filename_string);
-        j.at("filetype").get_to(p.filetype_string);
-        j.at("docID").get_to(p.docID_string);
-        j.at("timestamp").get_to(p.timestamp);
-    }
+  void from_json(const json &j, fileNode &p)
+  {
+    j.at("filename").get_to(p.filename);
+    j.at("filetype").get_to(p.filetype);
+    j.at("docID").get_to(p.docID);
+    j.at("timestamp").get_to(p.timestamp);
+  }
 }
+
 #endif
