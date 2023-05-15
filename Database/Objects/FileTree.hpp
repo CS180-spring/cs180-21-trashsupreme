@@ -96,6 +96,19 @@ public:
     }
   }
 
+  file::fileNode *get_node(std::string key)
+  {
+    const auto &keys = fileMap;
+    if (keys.find(key) != keys.end())
+    {
+      return keys.at(key);
+    }
+    else
+    {
+      return nullptr;
+    }
+  }
+
 private:
   std::string name;
   std::string nodeID; // ID for a folder node

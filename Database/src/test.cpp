@@ -1,27 +1,59 @@
+#include <filesystem>
+#include <string>
 #include <iostream>
-#include <fstream>
-#include <sstream>
-#include "../include/json.hpp"
+#include <utility>
+#include "../Objects/FileTree.hpp"
+#include "../Objects/FileNode.hpp"
 
-using json = nlohmann::json;
-
+std::pair<std::string, std::string> split_dir(std::string path)
+{
+    int index = path.rfind('/');
+    std::string prefix = "../data/";
+    int dot_index = path.find('.', index);
+    std::cout << path << "\n";
+    if (dot_index != std::string::npos)
+    {
+        // file
+        // 0 1 2 3 4
+        // a / a . b
+        // index = 1
+        // substr: (index+1, string.size() - (index+1))
+        std::cout << "File name: " << path.substr(index + 1, path.size() - (index + 1)) << '\n';
+    }
+    else
+    {
+        // directory
+    }
+    return std::make_pair("hi", "hi");
+}
 int main()
 {
-    std::ifstream file("../data/test.json");
-    std::string str;
 
-    if (file)
+    // using directory_iterator = std::filesystem::directory_iterator;
+    file::fileNode *root = new file::fileNode("root.txt", "0");
+    FileTree *tree = new FileTree(root);
+
+    using directory_iterator = std::filesystem::recursive_directory_iterator;
+    std::string myPath = "data";
+    for (const auto &dirEntry : directory_iterator(myPath))
     {
-        std::ostringstream ss;
-        ss << file.rdbuf();
-        str = ss.str();
+        if (std::filesystem::is_directory(dirEntry))
+        {
+            // std::cout << "this is a directory\n";
+        }
+        else
+        {
+            file::fileNode *new_node = new file::fileNode(dirEntry.path().string(), "5");
+            tree->filemap_add(new_node->get_docID(), new_node);
+            std::cout << tree->find_key(new_node->get_docID()) << std::endl;
+            std::cout << tree->get_node(new_node->get_docID())->get_filename() << std::endl;
+            std::cout << "path: " << dirEntry.path().string() << std::endl;
+            std::cout << "\tparent path: " << dirEntry.path().parent_path() << std::endl;
+            std::cout << "\tstem: " << dirEntry.path().stem() << std::endl;
+            std::cout << "\textension: " << dirEntry.path().extension() << std::endl;
+            std::cout << "\tfilename: " << dirEntry.path().filename() << std::endl;
+        }
+        // std::cout << "file: " <<
     }
-    json j = json::parse(str);
-    j["path"] = "test.json";
-    std::cout << j["name"] << std::endl;
-    std::cout << j["path"] << std::endl;
-    json nested = j["groupmates"];
-    std::cout << nested[0] << std::endl;
-
-    return 0;
+    // split_dir(std::string(dirEntry));
 }
