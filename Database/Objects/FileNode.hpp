@@ -32,7 +32,6 @@ namespace file
     {
       std::string substring = this->filename;
       std::string extension;
-      // extension = strchr(substr, '.');
       extension = substring.substr(substring.find(".") + 1);
 
       return extension;
@@ -46,7 +45,6 @@ namespace file
     void updateFilename(std::string fn)
     {
       filename = fn;
-      // filename_string = (std::string)filename;
       timestamp = std::chrono::system_clock::to_time_t(std::chrono::system_clock::now());
     }
 
@@ -57,13 +55,9 @@ namespace file
     }
 
     std::string filename;
-    // std::string filename_string = (std::string)filename; // overloaded char* to string to be compatible with JSON functions below
     std::string filetype;
-    // std::string filetype_string = (std::string)filetype; // overloaded char* to string to be compatible with JSON functions below
     std::string docID;
-    // std::string docID_string = (std::string)docID; // overloaded char* to string to be compatible with JSON functions below
     std::string path;
-    // std::string path_string = (std::string)path;
     std::time_t timestamp;
   };
   void to_json(json &j, const fileNode &p)

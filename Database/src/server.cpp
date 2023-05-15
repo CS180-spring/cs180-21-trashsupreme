@@ -31,6 +31,23 @@ std::vector<std::string> split(std::string s, std::string delimiter)
     return ret;
 }
 
+void init_tree(FileTree *tree)
+{
+    using directory_iterator = std::filesystem::recursive_directory_iterator;
+    std::string myPath = "/project/data";
+    int id = 1;
+    for (const auto &dirEntry : directory_iterator(myPath))
+    {
+        if (!std::filesystem::is_directory(dirEntry))
+        {
+            file::fileNode *file = new file::fileNode(dirEntry.path().string(), std::to_string(id));
+            tree->filemap_add(file->get_docID(), file);
+            std::cout << "file: " << file->get_filename() << " id: " << file->get_docID() << std::endl;
+            id++;
+        }
+    }
+}
+
 int main()
 {
 
@@ -39,24 +56,7 @@ int main()
     FileTree *tree = new FileTree(file);
     tree->filemap_add(file->get_docID(), file);
 
-    using directory_iterator = std::filesystem::recursive_directory_iterator;
-    std::string myPath = "/project/data";
-    int id = 1;
-    for (const auto &dirEntry : directory_iterator(myPath))
-    {
-        if (!std::filesystem::is_directory(dirEntry))
-        {
-            std::cout << dirEntry.path().string().c_str() << std::endl;
-            file::fileNode *file = new file::fileNode((char *)dirEntry.path().string().c_str(), (char *)std::to_string(id).c_str());
-            tree->filemap_add(file->get_docID(), file);
-            // std::cout << file->get_filename() << std::endl;
-            tree->find_key((char *)"1");
-            tree->find_key(file->get_docID());
-            std::cout << (char *)"1" << '\t' << file->get_docID() << std::endl;
-            std::cout << ((char *)"1" == file->get_docID()) << std::endl;
-            id++;
-        }
-    }
+    init_tree(tree);
 
     crow::App<crow::CORSHandler> app;
     auto &cors = app.get_middleware<crow::CORSHandler>();
@@ -64,18 +64,9 @@ int main()
     CROW_ROUTE(app, "/api/rest/v1/json/test")
     ([](const crow::request &req, crow::response &res)
      {
-        std::ifstream file("/project/data/test.json");
-        std::string str;
-
-        if (file)
-        {
-            std::ostringstream ss;
-            ss << file.rdbuf();
-            str = ss.str();
-        }
-        // res.set_header("Content-Type", "application/json");
-        // json j = json::parse(str);
-        res.write(str);
+        json j;
+        j["test"] = "/project/data/test.json";
+        res.write(to_string(j));
         res.end(); });
 
     CROW_ROUTE(app, "/api/rest/v1/json/query/<string>")

@@ -31,6 +31,11 @@ public:
     return this->name;
   }
 
+  std::string get_nodeID()
+  {
+    return this->nodeID;
+  }
+
   // Function which will add a file to the FileTree object's fileMap
   void filemap_add(std::string docID, file::fileNode *child)
   {
@@ -69,6 +74,22 @@ public:
     {
       file::fileNode *mapData = keys.at(key);
       std::cout << "File " << mapData->get_filename() << " exists!" << std::endl;
+      return;
+    }
+    else
+    {
+      std::cout << "File " << key << " doesn't exist!" << std::endl;
+      return;
+    }
+  }
+
+  void doesFolderExist(std::string key)
+  {
+    const auto &keys = folderMap; // auto which will search the folderMap
+    if (keys.find(key) != keys.end())
+    {
+      FileTree *mapData = keys.at(key);
+      std::cout << "Folder " << mapData->get_filename() << " exists!" << std::endl;
       return;
     }
     else
