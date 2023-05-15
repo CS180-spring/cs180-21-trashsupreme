@@ -3,12 +3,13 @@ import { defineComponent } from 'vue';
 import Query_Item from './Query_Item.vue';
 import Query_Item_Selector from './Query_Item_Selector.vue';
 import {Types} from '../../types'
+import { sendQuery } from '@/requests';
     export default defineComponent ({
         data() {return {
             keys: ["name", "extention"], //Hardcoded for now, could be dynamaic
             selected: new Map
         }},
-        emits:['delete'],
+        emits:['loaded'],
         components: {
             Query_Item,
             Query_Item_Selector
@@ -26,22 +27,15 @@ import {Types} from '../../types'
                     this.selected.set(key, value)
                 }
             },
-            submit() {
-                let query:{key: string, value: string}[] = []
-                this.keys.forEach((key) => {
-                    if (this.selected.get(key) != null) {
-                        query.push({key: key, value: this.selected.get(key)})
-                    } else {
-                        //query.push({key: key, value: ""})
-                    }
-                })
-                console.log(query)
-                let url = "http://localhost:18080/api/rest/v1/json/query/"
-                query.forEach((item) => {
-                    url += item.key + "=" + item.value + "&"
-                })
-                url = url.slice(0, url.length - 1)
-                console.log(url)
+            async submit() {
+                let data = sendQuery(this.keys, this.selected)
+                data.then((value) => {
+                    this.$emit('loaded', value)
+                },
+                (error) => {
+                    console.log(error)
+                }
+                )
             }
         }
     })
