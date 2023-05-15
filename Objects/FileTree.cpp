@@ -16,14 +16,15 @@ int main() {
   cout << "File extension of filename (Test.txt) is: " << extension << endl << endl;
 
   cout << "Adding file Test.txt to fileMap..." << endl;
-  txt_node->filemap_add(txt_filename, txt_file);
+  txt_node->filemap_add(txt_file->get_docID(), txt_file);
   cout << "Now searching for added file in the map..." << endl;
-  txt_node->find_key(txt_filename);
+  cout << txt_node->find_key(txt_filename) << endl;
+  txt_node->doesFileExist(txt_file->get_docID());
 
   cout << endl << "Removing file Test.txt from the map..." << endl;
-  txt_node->filemap_remove(txt_filename);
+  txt_node->filemap_remove(txt_file->get_docID());
   cout << "Now searching for removed file in the fileMap..." << endl;
-  txt_node->find_key(txt_filename);
+  txt_node->find_key(txt_file->get_docID());
 
   return 0;
 }

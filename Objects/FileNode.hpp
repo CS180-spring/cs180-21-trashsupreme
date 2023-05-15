@@ -54,6 +54,8 @@ namespace file {
     std::string filetype_string = (char*)filetype; //overloaded char* to string to be compatible with JSON functions below
     char* docID;
     std::string docID_string = (char*)docID; //overloaded char* to string to be compatible with JSON functions below
+		char* path;
+		std::string path_string = (char*)path;
     std::time_t timestamp;
   };
     void to_json(json& j, const fileNode& p) {
@@ -67,4 +69,5 @@ namespace file {
         j.at("timestamp").get_to(p.timestamp);
     }
 }
+
 #endif
