@@ -9,7 +9,8 @@ import AddButton from '../General_Components/AddButton.vue';
             folder: Types.Folder
         },
         data() {return {
-            isOpen: false
+            isOpen: false,
+            padding: (this.folder != undefined) ? this.folder.depth * 10 + "px" : "0px"
         }},
         components: {
             Item,
@@ -48,7 +49,7 @@ import AddButton from '../General_Components/AddButton.vue';
 </script>
 
 <template>
-    <div>
+    <div :style="{'padding-left':padding}">
         <span v-if="!folder?.isNew" @click="() => isOpen = !isOpen">
             <span v-if="!isOpen">📁</span>
             <span v-if="isOpen">📂</span>
