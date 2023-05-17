@@ -20,7 +20,7 @@ namespace file
     fileNode(std::string fn, std::string type, std::string ID) : filename(fn), filetype(type), docID(ID), timestamp(std::chrono::system_clock::to_time_t(std::chrono::system_clock::now())) {}
 
     // Main constructor which creates filetype without explicitly declaring it
-    fileNode(std::string fn, std::string ID) : filename(fn), filetype(filename.substr(filename.find(".") + 1)), docID(ID), timestamp(std::chrono::system_clock::to_time_t(std::chrono::system_clock::now())) {}
+    fileNode(std::string fn, std::string ID) : filename(fn), filetype(filename.substr(filename.find(".") )), docID(ID), timestamp(std::chrono::system_clock::to_time_t(std::chrono::system_clock::now())) {}
     ~fileNode() {}
 
     std::string get_filename()
@@ -32,8 +32,7 @@ namespace file
     {
       std::string substring = this->filename;
       std::string extension;
-      // extension = strchr(substr, '.');
-      extension = substring.substr(substring.find(".") + 1);
+      extension = substring.substr(substring.find(".") );
 
       return extension;
     }
@@ -56,17 +55,38 @@ namespace file
                 << "\nDate Last Updated: " << std::asctime(std::localtime(&timestamp)) << std::endl;
     }
 
+    //NLOHMANN_DEFINE_TYPE_INTRUSIVE(filename, filetype, docID, path, timestamp);
+
+    friend void to_json(nlohmann::json& nlohmann_json_j, const fileNode& nlohmann_json_t)
+    {
+        nlohmann_json_j["filename"] = nlohmann_json_t.filename;
+        nlohmann_json_j["filetype"] = nlohmann_json_t.filetype;
+        nlohmann_json_j["docID"] = nlohmann_json_t.docID;
+        nlohmann_json_j["path"] = nlohmann_json_t.path;
+        nlohmann_json_j["content"] = nlohmann_json_t.content;
+        nlohmann_json_j["timestamp"] = nlohmann_json_t.timestamp;
+    }
+
+    friend void from_json(const nlohmann::json& nlohmann_json_j, fileNode& nlohmann_json_t)
+    {
+        nlohmann_json_t.filename = nlohmann_json_j.at("filename");
+        nlohmann_json_t.filetype = nlohmann_json_j.at("filetype");
+        nlohmann_json_t.docID = nlohmann_json_j.at("docID");
+        nlohmann_json_t.path = nlohmann_json_j.at("path");
+        nlohmann_json_t.content = nlohmann_json_j.at("content");
+        nlohmann_json_t.timestamp = nlohmann_json_j.at("timestamp");
+    }
+
+    private:
     std::string filename;
-    // std::string filename_string = (std::string)filename; // overloaded char* to string to be compatible with JSON functions below
     std::string filetype;
-    // std::string filetype_string = (std::string)filetype; // overloaded char* to string to be compatible with JSON functions below
     std::string docID;
-    // std::string docID_string = (std::string)docID; // overloaded char* to string to be compatible with JSON functions below
     std::string path;
-    // std::string path_string = (std::string)path;
+    std::string content;
     std::time_t timestamp;
   };
-  void to_json(json &j, const fileNode &p)
+
+  /*void to_json(json &j, const fileNode &p)
   {
     j = json{{"filename", p.filename}, {"filetype", p.filetype}, {"docID", p.docID}, {"timestamp", p.timestamp}};
   }
@@ -77,7 +97,7 @@ namespace file
     j.at("filetype").get_to(p.filetype);
     j.at("docID").get_to(p.docID);
     j.at("timestamp").get_to(p.timestamp);
-  }
+  }*/
 }
 
 #endif

@@ -15,6 +15,7 @@ public:
   FileTree(file::fileNode *f)
   {
     name = f->get_fileExtension();
+    filemap_add(f->get_docID(), f);
   }
 
   // Constructor which creates a folder with corresponding folder name and nodeID
@@ -31,6 +32,10 @@ public:
     return this->name;
   }
 
+  std::string get_nodeID() {
+    return this->nodeID;
+  }
+
   // Function which will add a file to the FileTree object's fileMap
   void filemap_add(std::string docID, file::fileNode *child)
   {
@@ -38,7 +43,7 @@ public:
   }
 
   // Function which will add a folder to the FileTree object's folderMap
-  void filemap_add(std::string n_ID, FileTree *folder)
+  void foldermap_add(std::string n_ID, FileTree *folder)
   {
     folderMap.insert(std::make_pair(n_ID, folder));
   }
@@ -78,6 +83,33 @@ public:
     }
   }
 
+  void outputFolders(FileTree* folder) {
+    if(folder->folderMap.empty() == true) {
+      std::unordered_map<std::string, file::fileNode*>::iterator it = folder->fileMap.begin();
+      std::cout << "Files within folder \"" << folder->get_name() << "\": " << std::endl;
+      while(it != folder->fileMap.end()) {
+        std::cout << "File: " << it->second->get_filename() << "\t \t \t" << "docID: " << it->second->get_docID() << std::endl;
+        it++;
+      }
+      std::cout << std::endl;
+    }
+    else {
+      if(folder->fileMap.empty() != true) {
+        std::unordered_map<std::string, file::fileNode*>::iterator it = folder->fileMap.begin();
+        std::cout << "Files within folder \"" << folder->get_name() << "\": " << std::endl;
+        while(it != folder->fileMap.end()) {
+          std::cout << "File: " << it->second->get_filename() << "\t \t \t" << "docID: " << it->second->get_docID() << std::endl;
+          it++;
+        }
+      std::cout << std::endl;
+      }
+      for(auto i = folder->folderMap.begin(); i != folder->folderMap.end(); i++) {
+        std::cout << "Entering folder \"" << i->second->get_name() << "\" within folder \""<< folder->get_name() << "\"..." << std::endl;
+        i->second->outputFolders(i->second);
+      }
+    }
+  }
+
   /*Helper function which returns a boolean value confirming
   whether a file with this docID exists. */
   bool find_key(std::string key)
@@ -94,6 +126,18 @@ public:
       // std::cout << "File " << key << " doesn't exist!" << std::endl;
       return false;
     }
+  }
+
+  bool find_folder(std::string key) {
+    const auto &keys = folderMap; // auto which will search the folderMap
+    if (keys.find(key) != keys.end()) { return true; } 
+    else { return false; } 
+  }
+
+  FileTree* get_folder(std::string key) {
+    const auto &keys = folderMap;
+    if(keys.find(key) != keys.end()) { return keys.at(key); }
+    else { return nullptr; }
   }
 
 private:
