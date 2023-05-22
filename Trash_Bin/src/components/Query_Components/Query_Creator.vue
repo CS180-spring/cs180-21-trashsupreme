@@ -6,7 +6,7 @@ import {Types} from '../../types'
 import { sendQuery } from '@/requests';
     export default defineComponent ({
         data() {return {
-            keys: ["name", "extention"], //Hardcoded for now, could be dynamaic
+            keys: ["name", "extension"], //Hardcoded for now, could be dynamaic
             selected: new Map
         }},
         emits:['loaded'],

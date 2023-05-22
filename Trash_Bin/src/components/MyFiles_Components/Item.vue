@@ -1,43 +1,33 @@
 <script lang="ts">
 import { defineComponent } from 'vue';
 import {Types} from '../../types'
+import { sendUpdate } from '@/requests';
 import DeleteButton from '../General_Components/DeleteButton.vue'
-    
-function makeTable(content: string, delimiter: string) {
-    //console.log(content)
-    let rows = content.split('\n')
-    let table: string[][] = []
-    for (let row = 0; row < rows.length; row++) {
-        //console.log(rows[row].trim())
-        table.push(rows[row].trim().split(delimiter))
-    }
-    return table
-}
+import TableView from './TableView.vue';
+import EditableCell from './EditableCell.vue';
+import TextCell from './TextCell.vue';
 
     export default defineComponent ({
         props: {
             item: Types.Item
         },
         data() {return {
-            display: [[""]],
             toggle: false,
             padding: (this.item != undefined) ? this.item.depth * 10 + "px" : "0px"
         }},
         components: {
-            DeleteButton
+            DeleteButton,
+            TableView,
+            TextCell
         },
         emits: ['delete'],
-        created() {
-            if (this.item == undefined) {
-                this.display = [['error']]
+        methods: {
+            uploadSubmit(content: string) {
+                if (this.item != null) {
+                    this.item.content = content
+                    sendUpdate(this.item)
+                }
             }
-            else if (this.item.extention.toLowerCase() == "csv") {
-                this.display = makeTable(this.item?.content, ',')
-            }
-            else if (this.item.extention.toLowerCase() == "tsv") {
-                this.display = makeTable(this.item?.content, '\t')
-            }
-            //console.log(this.display)
         }
     })
 </script>
@@ -45,12 +35,14 @@ function makeTable(content: string, delimiter: string) {
 <template>
     <div :style="{'padding-left':padding}">
         <span @click="toggle = !toggle">
-            📄Name: {{ item?.name }}, Extention: {{ item?.extention }}
+            📄Name: {{ item?.name }}, Extension: {{ item?.extension }}
         </span>
         <DeleteButton @click="$emit('delete')" />
     </div>
-    <div v-if="toggle" v-for="row in display">
-        <span v-for="item in row">{{ item }} {{'\t'}} </span>
+    <div v-if="toggle">
+        <TableView v-if="item?.extension=='csv'" :content="item?.content" :delimiter="','" @submit="(content) => uploadSubmit(content)"/>
+        <TableView v-if="item?.extension=='tsv'" :content="item?.content" :delimiter="'\t'" @submit="(content) => uploadSubmit(content)"/>
+        <TextCell v-if="item?.extension=='txt' || item?.extension=='json'" :content="item?.content" @submit="(content) => {uploadSubmit(content)}"/>
     </div>
 </template>
 

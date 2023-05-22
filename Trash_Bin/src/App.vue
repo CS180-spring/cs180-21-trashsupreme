@@ -16,7 +16,7 @@ export default {
   },
   data() {return {
     menus: ["Login", "My Files", "Search"],
-    currentMenu: "Login"
+    currentMenu: "Search"
   }},
   methods: {
     changeMenu(currentLabel: string) {
@@ -33,16 +33,20 @@ export default {
 
   <main>
     <h1>App</h1>
+    <Search v-if="currentMenu === 'Search'" />
+    <!--
     <NavBar :labels="menus" @click="changeMenu" />
     <Login v-if="currentMenu === 'Login'" />
-    <Search v-if="currentMenu === 'Search'" />
     <MyFiles v-if="currentMenu === 'My Files'" />
+    -->
     
   </main>
+  <!--
   <div id="test">
       <SendButton />
       <img alt="Vue logo" class="logo" src="./assets/logo.svg" width="125" height="125" />
-    </div>
+  </div>
+  -->
 </template>
 
 <style scoped>
