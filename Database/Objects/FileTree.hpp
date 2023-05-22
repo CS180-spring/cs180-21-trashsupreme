@@ -149,17 +149,17 @@ public:
     {
       return nullptr;
     }
-    bool find_folder(std::string key)
+  }
+  bool find_folder(std::string key)
+  {
+    const auto &keys = folderMap; // auto which will search the folderMap
+    if (keys.find(key) != keys.end())
     {
-      const auto &keys = folderMap; // auto which will search the folderMap
-      if (keys.find(key) != keys.end())
-      {
-        return true;
-      }
-      else
-      {
-        return false;
-      }
+      return true;
+    }
+    else
+    {
+      return false;
     }
   }
 

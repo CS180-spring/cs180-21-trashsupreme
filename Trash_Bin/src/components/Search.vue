@@ -67,13 +67,13 @@ export default defineComponent ({
         methods: {
             renderFileTree(data: obj[]) {
                 console.log("Building Tree")
-
-                data = [tempData, tempData]
+                // data = [tempData, tempData]
                 this.data = []
                 for (let folder = 0; folder < data.length; folder++) {
                     this.data.push(renderFolder(data[folder]))
                 }
-
+                
+                console.log(this.data)
                 this.loaded = true
                 this.$forceUpdate();
             }

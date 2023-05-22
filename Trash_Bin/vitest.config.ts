@@ -13,3 +13,10 @@ export default mergeConfig(
     }
   })
 )
+
+module.exports = {
+  // options...
+  devServer: {
+    proxy: 'http://localhost:18080/api/rest/v1/json/',
+  }
+}
