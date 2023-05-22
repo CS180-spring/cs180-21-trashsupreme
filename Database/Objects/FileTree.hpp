@@ -161,25 +161,25 @@ public:
         return false;
       }
     }
+  }
 
-    FileTree *get_folder(std::string key)
+  FileTree *get_folder(std::string key)
+  {
+    const auto &keys = folderMap;
+    if (keys.find(key) != keys.end())
     {
-      const auto &keys = folderMap;
-      if (keys.find(key) != keys.end())
-      {
-        return keys.at(key);
-      }
-      else
-      {
-        return nullptr;
-      }
+      return keys.at(key);
     }
+    else
+    {
+      return nullptr;
+    }
+  }
 
-  private:
-    std::string name;
-    std::string nodeID; // ID for a folder node
-    std::unordered_map<std::string, file::fileNode *> fileMap;
-    std::unordered_map<std::string, FileTree *> folderMap;
-  };
-
+private:
+  std::string name;
+  std::string nodeID; // ID for a folder node
+  std::unordered_map<std::string, file::fileNode *> fileMap;
+  std::unordered_map<std::string, FileTree *> folderMap;
+};
 #endif
