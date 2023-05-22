@@ -1,13 +1,13 @@
 export module Types {
 export class Item {
     name: string = "";
-    extention: string = "";
+    extension: string = "";
     content: string = "";
     docID: string = "-1";
     depth: number = 0;
-    constructor(name: string, extention: string, content: string, docID: string, depth: number = 0) {
+    constructor(name: string, extension: string, content: string, docID: string, depth: number = 0) {
         this.name = name;
-        this.extention = extention;
+        this.extension = extension;
         this.content = content;
         this.docID = docID;
         this.depth = depth;
