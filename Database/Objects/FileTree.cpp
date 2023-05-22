@@ -87,6 +87,20 @@ int main() {
   cout << "Returned folder pointer: " << file_folder->get_folder("5") << endl;
   cout << "Returned folder name: " << file_folder->get_folder("5")->get_name() << endl;
 
+  cout << endl << "Testing get_file function..." << endl;
+  cout << "Searching for file \"csv_videodata.csv\" from root folder \"file_folder\"..." << endl;
+  //file_folder->filemap_add("1", txt_file);
+  cout << "Returned file pointer: " << file_folder->get_file("11") << endl;
+  cout << "Returned file name: " << file_folder->get_file("11")->get_filename() << endl;
+
+  cout << endl << "Now searching for file \"datafile1.csv\", which is nested within \"csv_data\"..." << endl;
+  cout << "Returned file pointer: " << file_folder->get_file("8") << endl;
+  cout << "Returned file name: " << file_folder->get_file("8")->get_filename() << endl;
+
+  cout << endl << "Now searching for file \"Test.txt\", which no longer exists within this system..." << endl;
+  cout << "Returned file pointer: " << file_folder->get_file("1") << endl;
+  cout << "Returned file name: " << file_folder->get_file("1")->get_filename() << endl;
+
 
   return 0;
 }

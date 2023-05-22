@@ -25,11 +25,17 @@ namespace file
 
     std::string get_filename()
     {
+      if(this == nullptr) { 
+        return "Invalid! File doesn't exist!\n";
+      }
       return filename;
     }
 
     std::string get_fileExtension()
     {
+      if(this == nullptr) { 
+        return "Invalid! File doesn't exist!\n";
+      }
       std::string substring = this->filename;
       std::string extension;
       extension = substring.substr(substring.find(".") );
@@ -39,6 +45,9 @@ namespace file
 
     std::string get_docID()
     {
+      if(this == nullptr) { 
+        return "Invalid! File doesn't exist!\n";
+      }
       return docID;
     }
 

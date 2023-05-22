@@ -134,6 +134,58 @@ public:
     else { return false; } 
   }
 
+  file::fileNode* get_file(std::string key) {
+    file::fileNode* file;
+
+    // If the current folder's folderMap & fileMap are empty (no folders to search through or files to search), then return nullptr
+    if(this->folderMap.empty() == true && this->fileMap.empty() == true) {
+      return nullptr;
+    }
+    // If there are no folders but there are files, iterate through the fileMap to search for the file
+    else if(this->folderMap.empty() == true && this->fileMap.empty() != true) {
+      std::unordered_map<std::string, file::fileNode*>::iterator f_it = this->fileMap.begin();
+      while(f_it != this->fileMap.end()) {
+        if(f_it->second->get_docID() == key) {
+          return f_it->second; 
+        }
+        ++f_it;
+      }
+      return nullptr;
+    }
+
+    else if(this->folderMap.empty() != true && this->fileMap.empty() != true) {
+      std::unordered_map<std::string, file::fileNode*>::iterator f_it = this->fileMap.begin();
+      std::unordered_map<std::string, FileTree*>::iterator it = this->folderMap.begin();
+      while(f_it != this->fileMap.end()) {
+        if(f_it->second->get_docID() == key) {
+          return f_it->second; 
+        }
+        ++f_it;
+      }
+      while(it != this->folderMap.end()) {
+        if(it->second->folderMap.empty() != true || it->second->fileMap.empty() != true) {
+          file = it->second->get_file(key);
+          if(file == nullptr) { }
+          else { return file; }
+        }
+        ++it;
+      }
+      return nullptr;
+    }
+
+    else {
+      std::unordered_map<std::string, FileTree*>::iterator it = this->folderMap.begin();
+      while(it != this->folderMap.end()) {
+        file = it->second->get_file(key);
+        if(file == nullptr) { }
+        else { return file; }
+        ++it;
+      }
+
+      return nullptr;
+    }
+  }
+
   FileTree* get_folder(std::string key) {
     
     // If the current folder's folderMap is empty (no folders to search through), then return nullptr
