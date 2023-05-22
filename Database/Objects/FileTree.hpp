@@ -135,9 +135,36 @@ public:
   }
 
   FileTree* get_folder(std::string key) {
-    const auto &keys = folderMap;
-    if(keys.find(key) != keys.end()) { return keys.at(key); }
-    else { return nullptr; }
+    
+    // If the current folder's folderMap is empty (no folders to search through), then return nullptr
+    if(this->folderMap.empty() == true) {
+      //std::cout << "No folders exist within the map of " << this->get_name() << "! Returning nullptr..." << std::endl;
+      return nullptr;
+    }
+
+    // Otherwise, iterate through the folderMap, recursively calling this function on each folder whose map isn't empty
+    else {
+      std::unordered_map<std::string, FileTree*>::iterator it = this->folderMap.begin();
+      FileTree* folder;
+
+      while(it != this->folderMap.end()) {
+        // If the current FileTree's nodeID is equivalent to the key, return the FileTree*
+        if(it->second->get_nodeID() == key) { return it->second; }
+
+        // Otherwise, make a recursive call of the function
+        else {
+          if(it->second->folderMap.empty() != true) {
+            folder = it->second->get_folder(key);
+            if(folder == nullptr) { }
+            else {
+              return folder;
+            }
+          }
+        }
+        ++it; // Increment the iterator
+      }
+      return nullptr; // Return nullptr if FileTree* with the specified key isn't found
+    }
   }
 
 private:
