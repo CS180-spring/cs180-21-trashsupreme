@@ -152,7 +152,7 @@ public:
       }
       return nullptr;
     }
-
+    // If there are both folders & files, iterate through the fileMap first and then iterate through the folderMap using recursive function call
     else if(this->folderMap.empty() != true && this->fileMap.empty() != true) {
       std::unordered_map<std::string, file::fileNode*>::iterator f_it = this->fileMap.begin();
       std::unordered_map<std::string, FileTree*>::iterator it = this->folderMap.begin();
@@ -173,6 +173,7 @@ public:
       return nullptr;
     }
 
+    // Otherwise, if the fileMap is empty but there are folders, iterate through them using recursive function call
     else {
       std::unordered_map<std::string, FileTree*>::iterator it = this->folderMap.begin();
       while(it != this->folderMap.end()) {
