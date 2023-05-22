@@ -2,8 +2,6 @@
 #include <string>
 #include <iostream>
 #include <utility>
-#include "../Objects/FileTree.hpp"
-#include "../Objects/FileNode.hpp"
 
 std::pair<std::string, std::string> split_dir(std::string path)
 {
@@ -30,29 +28,16 @@ int main()
 {
 
     // using directory_iterator = std::filesystem::directory_iterator;
-    file::fileNode *root = new file::fileNode("root.txt", "0");
-    FileTree *tree = new FileTree(root);
 
     using directory_iterator = std::filesystem::recursive_directory_iterator;
     std::string myPath = "data";
     for (const auto &dirEntry : directory_iterator(myPath))
     {
-        if (std::filesystem::is_directory(dirEntry))
-        {
-            // std::cout << "this is a directory\n";
-        }
-        else
-        {
-            file::fileNode *new_node = new file::fileNode(dirEntry.path().string(), "5");
-            tree->filemap_add(new_node->get_docID(), new_node);
-            std::cout << tree->find_key(new_node->get_docID()) << std::endl;
-            std::cout << tree->get_node(new_node->get_docID())->get_filename() << std::endl;
-            std::cout << "path: " << dirEntry.path().string() << std::endl;
-            std::cout << "\tparent path: " << dirEntry.path().parent_path() << std::endl;
-            std::cout << "\tstem: " << dirEntry.path().stem() << std::endl;
-            std::cout << "\textension: " << dirEntry.path().extension() << std::endl;
-            std::cout << "\tfilename: " << dirEntry.path().filename() << std::endl;
-        }
+        std::cout << "path: " << dirEntry.path().string() << std::endl;
+        std::cout << "\tparent path: " << dirEntry.path().parent_path() << std::endl;
+        std::cout << "\tstem: " << dirEntry.path().stem() << std::endl;
+        std::cout << "\textension: " << dirEntry.path().extension() << std::endl;
+        std::cout << "\tfilename: " << dirEntry.path().filename() << std::endl;
         // std::cout << "file: " <<
     }
     // split_dir(std::string(dirEntry));

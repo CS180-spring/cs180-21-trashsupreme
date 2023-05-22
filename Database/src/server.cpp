@@ -35,7 +35,7 @@ void init_tree(FileTree *tree)
 {
     using directory_iterator = std::filesystem::recursive_directory_iterator;
     std::string myPath = "/project/data";
-    int id = 1;
+    int id = 0;
     for (const auto &dirEntry : directory_iterator(myPath))
     {
         if (!std::filesystem::is_directory(dirEntry))
