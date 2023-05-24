@@ -2,7 +2,6 @@
 #include "FileTree.hpp"
 
 using namespace std;
-
 int main()
 {
 
@@ -112,4 +111,5 @@ int main()
      cout << "Returned file name: " << file_folder->get_file("1")->get_filename() << endl;
 
      return 0;
+
 }
