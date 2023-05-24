@@ -119,7 +119,7 @@ int main()
         res.write(to_string(send_array));
         res.end(); });
 
-    CROW_ROUTE(app, "/api/rest/v1/json/add/<string>/<string>")
+    CROW_ROUTE(app, "/api/rest/v1/json/create/<string>/<string>")
     ([&](const crow::request &req, crow::response &res, std::string doc_id, std::string query)
      {
         file::fileNode* new_file = new file::fileNode(query, doc_id);
@@ -141,6 +141,17 @@ int main()
         res.end(); });
 
     CROW_ROUTE(app, "/api/rest/v1/json/delete/<string>")
+    ([&](const crow::request &req, crow::response &res, std::string doc_id)
+     {
+        tree->filemap_remove(doc_id);
+        std::cout << "Deleting document " << doc_id << '\n';
+
+        json j;
+        j["response"] = "success";
+        res.write(to_string(j));
+        res.end(); });
+
+    CROW_ROUTE(app, "/api/rest/v1/json/folder/")
     ([&](const crow::request &req, crow::response &res, std::string doc_id)
      {
         tree->filemap_remove(doc_id);
