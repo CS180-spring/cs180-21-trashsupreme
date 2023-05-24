@@ -32,7 +32,8 @@ public:
     return this->name;
   }
 
-  std::string get_nodeID() {
+  std::string get_nodeID()
+  {
     return this->nodeID;
   }
 
@@ -83,28 +84,37 @@ public:
     }
   }
 
-  void outputFolders(FileTree* folder) {
-    if(folder->folderMap.empty() == true) {
-      std::unordered_map<std::string, file::fileNode*>::iterator it = folder->fileMap.begin();
+  void outputFolders(FileTree *folder)
+  {
+    if (folder->folderMap.empty() == true)
+    {
+      std::unordered_map<std::string, file::fileNode *>::iterator it = folder->fileMap.begin();
       std::cout << "Files within folder \"" << folder->get_name() << "\": " << std::endl;
-      while(it != folder->fileMap.end()) {
-        std::cout << "File: " << it->second->get_filename() << "\t \t \t" << "docID: " << it->second->get_docID() << std::endl;
+      while (it != folder->fileMap.end())
+      {
+        std::cout << "File: " << it->second->get_filename() << "\t \t \t"
+                  << "docID: " << it->second->get_docID() << std::endl;
         it++;
       }
       std::cout << std::endl;
     }
-    else {
-      if(folder->fileMap.empty() != true) {
-        std::unordered_map<std::string, file::fileNode*>::iterator it = folder->fileMap.begin();
+    else
+    {
+      if (folder->fileMap.empty() != true)
+      {
+        std::unordered_map<std::string, file::fileNode *>::iterator it = folder->fileMap.begin();
         std::cout << "Files within folder \"" << folder->get_name() << "\": " << std::endl;
-        while(it != folder->fileMap.end()) {
-          std::cout << "File: " << it->second->get_filename() << "\t \t \t" << "docID: " << it->second->get_docID() << std::endl;
+        while (it != folder->fileMap.end())
+        {
+          std::cout << "File: " << it->second->get_filename() << "\t \t \t"
+                    << "docID: " << it->second->get_docID() << std::endl;
           it++;
         }
-      std::cout << std::endl;
+        std::cout << std::endl;
       }
-      for(auto i = folder->folderMap.begin(); i != folder->folderMap.end(); i++) {
-        std::cout << "Entering folder \"" << i->second->get_name() << "\" within folder \""<< folder->get_name() << "\"..." << std::endl;
+      for (auto i = folder->folderMap.begin(); i != folder->folderMap.end(); i++)
+      {
+        std::cout << "Entering folder \"" << i->second->get_name() << "\" within folder \"" << folder->get_name() << "\"..." << std::endl;
         i->second->outputFolders(i->second);
       }
     }
@@ -128,10 +138,29 @@ public:
     }
   }
 
-  bool find_folder(std::string key) {
+  file::fileNode *get_node(std::string key)
+  {
+    const auto &keys = fileMap;
+    if (keys.find(key) != keys.end())
+    {
+      return keys.at(key);
+    }
+    else
+    {
+      return nullptr;
+    }
+  }
+  bool find_folder(std::string key)
+  {
     const auto &keys = folderMap; // auto which will search the folderMap
-    if (keys.find(key) != keys.end()) { return true; } 
-    else { return false; } 
+    if (keys.find(key) != keys.end())
+    {
+      return true;
+    }
+    else
+    {
+      return false;
+    }
   }
 
   file::fileNode* get_file(std::string key) {
@@ -153,6 +182,7 @@ public:
       return nullptr;
     }
     // If there are both folders & files, iterate through the fileMap first and then iterate through the folderMap using recursive function call
+
     else if(this->folderMap.empty() != true && this->fileMap.empty() != true) {
       std::unordered_map<std::string, file::fileNode*>::iterator f_it = this->fileMap.begin();
       std::unordered_map<std::string, FileTree*>::iterator it = this->folderMap.begin();
@@ -174,6 +204,7 @@ public:
     }
 
     // Otherwise, if the fileMap is empty but there are folders, iterate through them using recursive function call
+
     else {
       std::unordered_map<std::string, FileTree*>::iterator it = this->folderMap.begin();
       while(it != this->folderMap.end()) {
@@ -187,6 +218,7 @@ public:
     }
   }
 
+
   FileTree* get_folder(std::string key) {
     
     // If the current folder's folderMap is empty (no folders to search through), then return nullptr
@@ -196,6 +228,7 @@ public:
     }
 
     // Otherwise, iterate through the folderMap, recursively calling this function on each folder whose map isn't empty
+
     else {
       std::unordered_map<std::string, FileTree*>::iterator it = this->folderMap.begin();
       FileTree* folder;
@@ -226,5 +259,4 @@ private:
   std::unordered_map<std::string, file::fileNode *> fileMap;
   std::unordered_map<std::string, FileTree *> folderMap;
 };
-
 #endif
