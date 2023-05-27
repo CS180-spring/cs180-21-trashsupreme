@@ -253,6 +253,26 @@ public:
     }
   }
 
+  nlohmann::json get_json()
+  {
+    nlohmann::json ret;
+    auto files = nlohmann::json::array();
+    auto folders = nlohmann::json::array();
+    for (auto i : fileMap)
+    {
+      files.push_back(i.second->get_json());
+    }
+    for (auto i : folderMap)
+    {
+      folders.push_back(i.second->get_json());
+    }
+    ret["Files"] = files;
+    ret["Folders"] = folders;
+    ret["Name"] = name;
+    ret["NodeID"] = nodeID;
+    return ret;
+  }
+
 private:
   std::string name;
   std::string nodeID; // ID for a folder node
