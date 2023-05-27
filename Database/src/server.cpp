@@ -30,34 +30,63 @@ std::vector<std::string> split(std::string s, std::string delimiter)
     ret.push_back(s.substr(start));
     return ret;
 }
-
-void init_tree(FileTree *tree)
+std::string read_file(std::string path)
 {
-    using directory_iterator = std::filesystem::recursive_directory_iterator;
-    std::string myPath = "/project/data";
+    std::ifstream ifs(path);
+    std::string content((std::istreambuf_iterator<char>(ifs)),
+                        (std::istreambuf_iterator<char>()));
+    return content;
+}
+
+FileTree *init_tree()
+{
+    int folder_index = 1;
+    int file_index = 0;
     // std::string myPath = "../data";
+    std::string myPath = "/project/data";
+    FileTree *root = new FileTree("root", myPath);
+    using directory_iterator = std::filesystem::recursive_directory_iterator;
     int id = 0;
     for (const auto &dirEntry : directory_iterator(myPath))
     {
-        if (!std::filesystem::is_directory(dirEntry))
+        std::cout << dirEntry << std::endl;
+        if (std::filesystem::is_directory(dirEntry))
         {
-            file::fileNode *file = new file::fileNode(dirEntry.path().string(), std::to_string(id));
-            tree->filemap_add(file->get_docID(), file);
-            std::cout << "file: " << file->get_filename() << " id: " << file->get_docID() << std::endl;
-            id++;
+            std::cout << "directory: " << dirEntry << std::endl;
+            if (dirEntry.path().parent_path() == myPath)
+            {
+                std::cout << dirEntry << " is in the root directory" << std::endl;
+                FileTree *new_tree = new FileTree(dirEntry.path().stem(), dirEntry.path());
+                root->foldermap_add(new_tree->get_nodeID(), new_tree);
+            }
+            else
+            {
+                std::cout << dirEntry << " is not in the root directory" << std::endl;
+                FileTree *new_tree = new FileTree(dirEntry.path().stem(), dirEntry.path());
+                root->get_folder(dirEntry.path().parent_path())->foldermap_add(new_tree->get_nodeID(), new_tree);
+            }
+        }
+        else
+        {
+            file::fileNode *file = new file::fileNode(dirEntry.path().filename(), std::to_string(id++));
+            file->set_path(dirEntry.path());
+            if (dirEntry.path().parent_path() == myPath)
+            {
+                root->filemap_add(file->get_docID(), file);
+            }
+            else
+            {
+                root->get_folder(dirEntry.path().parent_path())->filemap_add(file->get_docID(), file);
+            }
         }
     }
+    return root;
 }
 
 int main()
 {
 
-    file::fileNode *file = new file::fileNode("root.txt", (char *)"0");
-
-    FileTree *tree = new FileTree(file);
-    tree->filemap_add(file->get_docID(), file);
-
-    // init_tree(tree);
+    FileTree *tree = init_tree();
 
     crow::App<crow::CORSHandler> app;
     auto &cors = app.get_middleware<crow::CORSHandler>();
@@ -83,39 +112,12 @@ int main()
     CROW_ROUTE(app, "/api/rest/v1/json/query/<string>")
     ([&](const crow::request &req, crow::response &res, std::string query)
      {
-        std::ifstream file("/project/data/test.json");
+        std::cout << "Query: " << query << std::endl;
         std::string str;
-
-        std::vector<std::string> vec = split(query, "&");
-        std::vector<std::string> temp;
-
-        json j;
-        // for(int i = 0; i < vec.size(); i++) {
-        //     temp = split(vec.at(i), "=");
-        //     j[temp.at(0)] = temp.at(1);
-        // }
-        // if (tree->find_key(std::regex_replace(temp.at(0), std::regex("%2F"), "/"))) {
-        //     std::cout << "Found file " << temp.at(0) << std::endl;
-        //     j[temp.at(0)] = "found";
-        // }
-        j["Name"] = "frontend";
-        j["Extension"] = "txt";
-        j["Content"] = "hello\nworld";
-        j["DocID"] = "5";
-
-
-        json send_json;
-        auto folders = json::array();
-        auto json_array = json::array();
-        send_json["Name"] = "root";
-        json_array.push_back(j);
-        send_json["Files"] = json_array;
-        send_json["Folders"] = folders;
         auto send_array = json::array();
-        send_array.push_back(send_json);
-        
-        std::cout << send_json.dump(2);
-        res.set_header("Access-Control-Allow-Origin", "*");
+        // send_array.push_back(tree->get_file(query)->get_json());
+        // send_array.push_back(tree->get_file("0")->get_json());
+        send_array.push_back(tree->get_json());
         res.write(to_string(send_array));
         res.end(); });
 
@@ -124,7 +126,6 @@ int main()
      {
         file::fileNode* new_file = new file::fileNode(query, doc_id);
         tree->filemap_add(new_file->get_docID(), new_file);
-        std::ifstream file("/project/data/test.json");
 
         json j;
         j["response"] = "Success";
@@ -140,22 +141,22 @@ int main()
         res.write(to_string(j));
         res.end(); });
 
-    CROW_ROUTE(app, "/api/rest/v1/json/delete/<string>")
+    CROW_ROUTE(app, "/api/rest/v1/json/delete/file/<string>")
     ([&](const crow::request &req, crow::response &res, std::string doc_id)
      {
-        tree->filemap_remove(doc_id);
-        std::cout << "Deleting document " << doc_id << '\n';
+        // tree->filemap_remove(doc_id);
+        std::cout << "Still under construction: delete file" << std::endl;
 
         json j;
         j["response"] = "success";
         res.write(to_string(j));
         res.end(); });
 
-    CROW_ROUTE(app, "/api/rest/v1/json/folder/")
+    CROW_ROUTE(app, "/api/rest/v1/json/folder/delete/<string>")
     ([&](const crow::request &req, crow::response &res, std::string doc_id)
      {
-        tree->filemap_remove(doc_id);
-        std::cout << "Deleting document " << doc_id << '\n';
+        // tree->filemap_remove(doc_id);
+        std::cout << "Still under construction: delete folder" << std::endl;
 
         json j;
         j["response"] = "success";

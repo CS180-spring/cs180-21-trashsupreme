@@ -105,6 +105,14 @@ namespace file
       return ret;
     }
 
+    void set_path(std::string new_path) {
+      path = new_path;
+    }
+
+    std::string get_path() {
+      return path;
+    }
+
   private:
     std::string filename;
     std::string filetype;
