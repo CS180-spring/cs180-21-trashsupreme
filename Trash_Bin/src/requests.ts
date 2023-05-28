@@ -39,6 +39,14 @@ export async function sendDelete(item: Types.Item) {
     return data
 }
 
+export async function sendDeleteFolder(folder: Types.Folder) {
+    let url = baseURL + "delete/folder/" + folder.nodeID.split("/").join("%2F")
+    console.log(url)
+    const response = await fetch(url)
+    const data = await response.json()
+    return data
+}
+
 export async function sendUpdate(item: Types.Item) {
     let url = baseURL + "update/" + item.docID + "/" + item.content
     console.log(url)

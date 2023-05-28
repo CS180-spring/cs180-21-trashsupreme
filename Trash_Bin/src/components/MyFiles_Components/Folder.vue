@@ -5,7 +5,7 @@ import Item from './Item.vue'
 import DeleteButton from '../General_Components/DeleteButton.vue'
 import AddButton from '../General_Components/AddButton.vue'
 import UploadButton from '../General_Components/UploadButton.vue'
-import {sendCreate, sendDelete} from '../../requests'
+import {sendCreate, sendDelete, sendDeleteFolder} from '../../requests'
     export default defineComponent ({
         props: {
             folder: Types.Folder
@@ -70,10 +70,13 @@ import {sendCreate, sendDelete} from '../../requests'
                 this.$forceUpdate();
             },
             deleteFolder(currFolder: Types.Folder) {
-                if(this.folder != null) {
-                    this.folder.folders = this.folder.folders.filter((folder) => folder != currFolder)
-                    this.$forceUpdate();
-                }
+                let upload = sendDeleteFolder(currFolder)
+                upload.then(() => {
+                    if(this.folder != null) {
+                        this.folder.folders = this.folder.folders.filter((folder) => folder != currFolder)
+                        this.$forceUpdate();
+                    }
+                })
             },
             addFolder(currFolder: Types.Folder) {
                 if(this.folder != null) {

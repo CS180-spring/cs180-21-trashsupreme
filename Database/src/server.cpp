@@ -152,7 +152,7 @@ int main()
         res.write(to_string(j));
         res.end(); });
 
-    CROW_ROUTE(app, "/api/rest/v1/json/folder/delete/<string>")
+    CROW_ROUTE(app, "/api/rest/v1/json/delete/folder/<string>")
     ([&](const crow::request &req, crow::response &res, std::string doc_id)
      {
         // tree->filemap_remove(doc_id);
