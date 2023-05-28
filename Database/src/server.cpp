@@ -50,7 +50,8 @@ FileTree *init_tree()
     int folder_index = 1;
     int file_index = 0;
     // std::string myPath = "../data";
-    std::string myPath = "/project/data";
+    // std::string myPath = "/project/data";
+    std::string myPath = "/usr/share/data";
     FileTree *root = new FileTree("root", myPath);
     using directory_iterator = std::filesystem::recursive_directory_iterator;
     int id = 0;
@@ -102,7 +103,8 @@ int main()
     ([](const crow::request &req, crow::response &res)
      {
         using recursive_directory_iterator = std::filesystem::recursive_directory_iterator;
-        std::string myPath = "/project/data";
+        // std::string myPath = "/project/data";
+        std::string myPath = "/usr/share/data";
         // std::string myPath = "../data";
         std::string ret = "";
         for (const auto &dirEntry : recursive_directory_iterator(myPath))
