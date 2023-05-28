@@ -32,7 +32,7 @@ export async function sendCreate(item: Types.Item) {
 }
 
 export async function sendDelete(item: Types.Item) {
-    let url = baseURL + "delete/" + item.docID
+    let url = baseURL + "delete/file/" + item.docID
     console.log(url)
     const response = await fetch(url)
     const data = await response.json()

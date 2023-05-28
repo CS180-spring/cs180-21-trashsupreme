@@ -38,6 +38,13 @@ std::string read_file(std::string path)
     return content;
 }
 
+std::string replace_escape(std::string escape, std::string replace, std::string original)
+{
+    std::regex re(escape);
+
+    return std::regex_replace(original, re, replace);
+}
+
 FileTree *init_tree()
 {
     int folder_index = 1;
@@ -97,16 +104,17 @@ int main()
         using recursive_directory_iterator = std::filesystem::recursive_directory_iterator;
         std::string myPath = "/project/data";
         // std::string myPath = "../data";
-        int id = 0;
+        std::string ret = "";
         for (const auto &dirEntry : recursive_directory_iterator(myPath))
         {
             // std::cout << dirEntry.path().string() << std::endl;
             std::cout << dirEntry << std::endl;
-            id++;
+            ret += dirEntry.path().string() + '\n';
         }
-        json j;
-        j["response"] = "OK";
-        res.write(to_string(j));
+        // json j;
+        // j["response"] = "OK";
+        // res.write(to_string(j));
+        res.write(ret);
         res.end(); });
 
     CROW_ROUTE(app, "/api/rest/v1/json/query/<string>")
@@ -146,6 +154,18 @@ int main()
      {
         // tree->filemap_remove(doc_id);
         std::cout << "Still under construction: delete file" << std::endl;
+        file::fileNode* file_to_delete = tree->get_file(doc_id);
+        bool success = false;
+        if (file_to_delete) {
+            std::cout << "Deleting file " << file_to_delete->get_path() << std::endl;
+            success = std::filesystem::remove(file_to_delete->get_path());
+            if (success) {
+                std::cout << "Successfully deleted " << file_to_delete->get_path() << std::endl;
+            }
+            else {
+                std::cout << "Failed to delete " << file_to_delete->get_path() << std::endl;
+            }
+        }
 
         json j;
         j["response"] = "success";
@@ -153,10 +173,25 @@ int main()
         res.end(); });
 
     CROW_ROUTE(app, "/api/rest/v1/json/delete/folder/<string>")
-    ([&](const crow::request &req, crow::response &res, std::string doc_id)
+    ([&](const crow::request &req, crow::response &res, std::string node_id)
      {
-        // tree->filemap_remove(doc_id);
-        std::cout << "Still under construction: delete folder" << std::endl;
+        std::cout << "TODO: Remove deleted folder from file tree" << std::endl;
+        std::string folder_path = replace_escape("%2F", "/", node_id);
+        FileTree* folder_to_delete = tree->get_folder(folder_path);
+        bool success = false;
+        if(folder_to_delete) {
+            std::cout << "Deleting folder " << folder_to_delete->get_nodeID() << std::endl;
+            success = std::filesystem::remove_all(std::filesystem::path(folder_path));
+            if(success) {
+                std::cout << "Successfully deleted " << folder_path << std::endl;
+            }
+            else {
+                std::cout << "Failed to delete " << folder_path << std::endl;
+            }
+        }
+        else {
+            std::cout << "Folder " << folder_path << " does not exist!" << std::endl;
+        }
 
         json j;
         j["response"] = "success";
