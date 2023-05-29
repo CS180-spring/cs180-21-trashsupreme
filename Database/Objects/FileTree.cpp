@@ -100,6 +100,28 @@ int main() {
   cout << endl << "Now searching for file \"Test.txt\", which no longer exists within this system..." << endl;
   cout << "Returned file pointer: " << file_folder->get_file("1") << endl;
   cout << "Returned file name: " << file_folder->get_file("1")->get_filename() << endl;
+  cout << "Attempting to remove \"Test.txt\", which no longer exists..." << endl;
+  file_folder->filemap_remove("1");
+
+  cout << endl << "Attempting to remove \"csv_data_folder\" from the system..." << endl;
+  file_folder->foldermap_remove("4");
+  cout << "Now searching for removed folder, which no longer exists within the system..." << endl;
+  cout << "Returned folder pointer: " << file_folder->get_folder("4") << endl;
+  cout << "Returned file name: " << file_folder->get_folder("4")->get_name() << endl;
+
+  cout << endl << "Attempting to search for files/folders in \"csv_data_folder\", which has been removed from the system..." << endl;
+  csv_data_folder->outputFolders(csv_data_folder);
+
+
+  /*
+  cout << "Attempting to remove \"videodata.csv\", the most deeply rooted file within the system..." << endl;
+  file_folder->filemap_remove("11");
+  cout << endl << "Now searching for file \"videodata.csv\", which no longer exists within this system..." << endl;
+  cout << "Returned file pointer: " << file_folder->get_file("11") << endl;
+  cout << "Returned file name: " << file_folder->get_file("11")->get_filename() << endl;
+  */
+
+  //txt_file2->to_json();
 
 
   return 0;
