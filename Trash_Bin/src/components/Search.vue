@@ -4,7 +4,7 @@ import Query_Creator from './Query_Components/Query_Creator.vue';
 import Result from './Result_Components/Result.vue';
 import {Types} from '../types'
 
-type obj = { Name: string; Files: { Name: string; Extension: string; Content: string; DocID: string;}[]; Folders: { Name: string; Files: { Name: string; Extension: string; Content: string; DocID: string;}[]; Folders: never[]; }[]; }
+type obj = { Name: string; NodeID: string; Files: { Name: string; Extension: string; Content: string; DocID: string;}[]; Folders: { Name: string; NodeID: string; Files: { Name: string; Extension: string; Content: string; DocID: string;}[]; Folders: never[]; }[]; }
 
 let tempData = {
     "Name": "Root",
@@ -49,6 +49,7 @@ function renderFolder(data: obj, depth: number = 0) {
     let name: string = data["Name"]
     let items: Types.Item[] = []
     let folders: Types.Folder[] = []
+    let nodeID: string = data["NodeID"]
     for(let file = 0; file < data["Files"].length; file++) {
         items.push(new Types.Item(data["Files"][file]["Name"], data["Files"][file]["Extension"], data["Files"][file]["Content"], data["Files"][file]["DocID"], depth + 1))
     }
@@ -56,7 +57,7 @@ function renderFolder(data: obj, depth: number = 0) {
         console.log(data["Folders"][folder])
         folders.push(renderFolder(data["Folders"][folder], depth + 1))
     }
-    return new Types.Folder(name, folders, items, false, depth)
+    return new Types.Folder(name, folders, items, false, depth, nodeID)
 }
 
 export default defineComponent ({

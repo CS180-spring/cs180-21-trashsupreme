@@ -23,8 +23,8 @@ export async function sendQuery(keys: string[], selected: Map<string, string>) {
     return data
 }
 
-export async function sendCreate(item: Types.Item) {
-    let url = baseURL + "create/" + item.content
+export async function sendCreate(item: Types.Item, parentFolder: Types.Folder) {
+    let url = baseURL + "create/file/" + encodeURI(item.name) + "/" + encodeURI(parentFolder["nodeID"]).split("/").join("%2F") + "/" + encodeURI(item.content)
     console.log(url)
     const response = await fetch(url)
     const data = await response.json()
@@ -32,7 +32,15 @@ export async function sendCreate(item: Types.Item) {
 }
 
 export async function sendDelete(item: Types.Item) {
-    let url = baseURL + "delete/" + item.docID
+    let url = baseURL + "delete/file/" + item.docID
+    console.log(url)
+    const response = await fetch(url)
+    const data = await response.json()
+    return data
+}
+
+export async function sendDeleteFolder(folder: Types.Folder) {
+    let url = baseURL + "delete/folder/" + folder.nodeID.split("/").join("%2F")
     console.log(url)
     const response = await fetch(url)
     const data = await response.json()

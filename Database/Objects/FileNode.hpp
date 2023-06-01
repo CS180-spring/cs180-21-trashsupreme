@@ -2,6 +2,7 @@
 #define _FILENODE_H_
 
 #include "json.hpp"
+#include <fstream>
 #include <iostream>
 #include <ctime>
 #include <chrono>
@@ -83,6 +84,33 @@ namespace file
       nlohmann_json_t.path = nlohmann_json_j.at("path");
       nlohmann_json_t.content = nlohmann_json_j.at("content");
       nlohmann_json_t.timestamp = nlohmann_json_j.at("timestamp");
+    }
+
+    std::string read_file()
+    {
+      std::ifstream ifs(path);
+      std::string content((std::istreambuf_iterator<char>(ifs)),
+                          (std::istreambuf_iterator<char>()));
+      return content;
+    }
+
+    nlohmann::json get_json()
+    {
+      nlohmann::json ret;
+
+      ret["Name"] = get_filename();
+      ret["Extension"] = get_fileExtension();
+      ret["DocID"] = docID;
+      ret["Content"] = read_file();
+      return ret;
+    }
+
+    void set_path(std::string new_path) {
+      path = new_path;
+    }
+
+    std::string get_path() {
+      return path;
     }
 
   private:

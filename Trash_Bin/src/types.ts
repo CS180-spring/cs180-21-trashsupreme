@@ -20,12 +20,14 @@ export class Folder {
     items: Item[] = [];
     isNew: boolean = false;
     depth: number = 0;
-    constructor(name: string, folders: Folder[], items: Item[], isNew: boolean = false, depth: number = 0) {
+    nodeID: string = "";
+    constructor(name: string, folders: Folder[], items: Item[], isNew: boolean = false, depth: number = 0, nodeID: string = "") {
         this.name = name;
         this.folders = folders;
         this.items = items;
         this.isNew = isNew;
-        this.depth = depth
+        this.depth = depth;
+        this.nodeID = nodeID;
     }
 }
 }

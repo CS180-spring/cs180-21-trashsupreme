@@ -2,6 +2,7 @@ FROM frolvlad/alpine-gxx
 
 RUN apk add asio-dev
 RUN apk add make
+RUN apk add curl-dev
 
 WORKDIR /project
 

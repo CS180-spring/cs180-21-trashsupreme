@@ -109,7 +109,7 @@ int main()
           << "Now searching for file \"Test.txt\", which no longer exists within this system..." << endl;
      cout << "Returned file pointer: " << file_folder->get_file("1") << endl;
      cout << "Returned file name: " << file_folder->get_file("1")->get_filename() << endl;
+     cout << file_folder->get_json().dump(4) << endl;
 
      return 0;
-
 }
