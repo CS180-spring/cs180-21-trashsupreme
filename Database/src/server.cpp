@@ -131,12 +131,19 @@ int main()
         res.write(to_string(send_array));
         res.end(); });
 
-    CROW_ROUTE(app, "/api/rest/v1/json/create/<string>/<string>")
-    ([&](const crow::request &req, crow::response &res, std::string doc_id, std::string query)
+    CROW_ROUTE(app, "/api/rest/v1/json/create/file/<string>/<string>/<string>")
+    ([&](const crow::request &req, crow::response &res, std::string file_name, std::string node_id, std::string content)
      {
-        file::fileNode* new_file = new file::fileNode(query, doc_id);
-        tree->filemap_add(new_file->get_docID(), new_file);
-
+        std::string path = replace_escape("%2F", "/", node_id);
+        std::string new_content = replace_escape("%20", " ", content);
+        new_content = replace_escape("%0D%0A", " \n", new_content);
+        new_content = replace_escape("%0A", "\n", new_content);
+        std::cout << new_content << std::endl;
+        std::ofstream new_file(path + "/" + file_name);
+        new_file << new_content;
+        new_file.close();
+        // new_content = replace_escape("")
+        path += "/" + file_name;
         json j;
         j["response"] = "Success";
         res.write(to_string(j));

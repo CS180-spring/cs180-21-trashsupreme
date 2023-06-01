@@ -43,7 +43,7 @@ import {sendCreate, sendDelete, sendDeleteFolder} from '../../requests'
                                 content = res.target.result
                                 if (this.folder != undefined) {
                                     let item = new Types.Item(this.file.name, extention, content, '-1', this.folder.depth + 1)
-                                    let upload = sendCreate(item)
+                                    let upload = sendCreate(item, this.folder)
                                     upload.then((res) => {
                                         item.docID = res
                                         if (this.folder != undefined) this.folder.items.push(item)

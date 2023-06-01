@@ -23,8 +23,8 @@ export async function sendQuery(keys: string[], selected: Map<string, string>) {
     return data
 }
 
-export async function sendCreate(item: Types.Item) {
-    let url = baseURL + "create/" + item.content
+export async function sendCreate(item: Types.Item, parentFolder: Types.Folder) {
+    let url = baseURL + "create/file/" + encodeURI(item.name) + "/" + encodeURI(parentFolder["nodeID"]).split("/").join("%2F") + "/" + encodeURI(item.content)
     console.log(url)
     const response = await fetch(url)
     const data = await response.json()
