@@ -145,7 +145,7 @@ int main()
         // new_content = replace_escape("")
         path += "/" + file_name;
         json j;
-        j["response"] = "Success";
+        j["message"] = "Success";
         res.write(to_string(j));
         res.end(); });
 
