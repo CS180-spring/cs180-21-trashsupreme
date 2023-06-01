@@ -28,12 +28,18 @@ public:
   // Returns the name of the FileTree (ex: ".txt",".pdf", etc.)
   std::string get_name()
   {
-    std::string result = "\n";
+    if(this == nullptr) {
+      std::string x = "ERROR! Attempting to access folder which does not exist!\n";
+      return x;
+    }
     return this->name;
   }
 
-  std::string get_nodeID()
-  {
+  std::string get_nodeID() {
+    if(this == nullptr) {
+      std::string x = "ERROR! Attempting to access folder which does not exist!\n";
+      return x;
+    }
     return this->nodeID;
   }
 
@@ -52,16 +58,116 @@ public:
   // Removes file with corresponding key (docID) from the tree
   void filemap_remove(std::string key)
   {
-    // If a file with this key exists, then we can properly remove it
-    if (this->find_key(key) != false)
-    {
-      fileMap.erase(key);
+
+    file::fileNode* file;
+
+    // If the current folder's folderMap & fileMap are empty (no folders to search through or files to search), then return
+    if(this->folderMap.empty() == true && this->fileMap.empty() == true) {
       return;
     }
-    // Otherwise, we cannot remove a file with a key that is not mapped/does not exist!
-    else
-    {
-      std::cout << "Unable to remove as a file with that key doesn't exist!" << std::endl;
+    // If there are no folders but there are files, iterate through the fileMap to search for the file to remove
+    else if(this->folderMap.empty() == true && this->fileMap.empty() != true) {
+      std::unordered_map<std::string, file::fileNode*>::iterator f_it = this->fileMap.begin();
+      while(f_it != this->fileMap.end()) {
+        if(f_it->second->get_docID() == key) {
+          fileMap.erase(key);
+          return; 
+        }
+        ++f_it;
+      }
+      return;
+    }
+    // If there are both folders & files, iterate through the fileMap first and then iterate through the folderMap using recursive function call
+    else if(this->folderMap.empty() != true && this->fileMap.empty() != true) {
+      std::unordered_map<std::string, file::fileNode*>::iterator f_it = this->fileMap.begin();
+      std::unordered_map<std::string, FileTree*>::iterator it = this->folderMap.begin();
+      while(f_it != this->fileMap.end()) {
+        if(f_it->second->get_docID() == key) {
+          fileMap.erase(key);
+          return;
+        }
+        ++f_it;
+      }
+      while(it != this->folderMap.end()) {
+        if(it->second->folderMap.empty() != true || it->second->fileMap.empty() != true) {
+          it->second->filemap_remove(key);
+        }
+        ++it;
+      }
+      return;
+    }
+    //Otherwise, if there are no files but there are folders, search through the folders.
+    else {
+      std::unordered_map<std::string, FileTree*>::iterator it = this->folderMap.begin();
+      while(it != this->folderMap.end()) {
+        it->second->filemap_remove(key);
+        ++it;
+      }
+
+      // If file to be removed doesn't exist within the path, return an error message.
+      std::cout << "ERROR: File was not found in the path!" << std::endl;
+      return;
+    }
+  }
+
+  void foldermap_remove(std::string key) {
+    // If the current folder's folderMap is empty (no folders to search through), then return
+    if(this->folderMap.empty() == true) {
+      return;
+    }
+    else {
+      std::unordered_map<std::string, FileTree*>::iterator it = this->folderMap.begin();
+      FileTree* folder;
+
+      while(it != this->folderMap.end()) {
+        // If the current FileTree's nodeID is equivalent to the key, clear its fileMap and folderMap
+        if(it->second->get_nodeID() == key) {
+          std::cout << "Folder has been found! Clearing its fileMap and folderMap..." << std::endl;
+          it->second->clearMaps();
+          this->folderMap.erase(key);
+          return;
+        }
+        ++it; // Increment the iterator
+      }
+      it = this->folderMap.begin();
+      while(it != this->folderMap.end()) {
+        it->second->foldermap_remove(key);
+        ++it;
+      }
+      return;
+    }
+  }
+
+  // A helper function used in foldermap_remove to recursively clear all folderMaps and fileMaps under the located folder.
+  void clearMaps() {
+
+    // If this FileTree*'s fileMap is not empty, clear it.
+    if(this->fileMap.empty() != true) {
+      // Clear this folder's fileMap.
+      this->fileMap.clear();
+    }
+    // If both maps are empty, return.
+    if(this->fileMap.empty() && this->folderMap.empty() == true) {
+      return;
+    }
+    // Otherwise, clear the folderMap recursively.
+    if(this->folderMap.empty() != true) {
+      std::unordered_map<std::string, FileTree*>::iterator folder_it = this->folderMap.begin();
+
+      // Iterate through this folder's nested folders and make a recursive function call.
+      while(folder_it != folderMap.end()) {
+        // If the iterator FileTree's maps are both empty, do nothing and continue iterating.
+        if(folder_it->second->folderMap.empty() == true && folder_it->second->fileMap.empty() == true) {  }
+        // Else if the iterator FileTree's folderMap is empty, but not its fileMap, clear the fileMap.
+        else if(folder_it->second->folderMap.empty() == true && folder_it->second->fileMap.empty() != true) {
+          folder_it->second->clearMaps();
+        }
+        // Otherwise, make a recursive function call to clear all folders within this FileTree*
+        else {
+          folder_it->second->clearMaps();
+        }
+        ++folder_it;
+      }
       return;
     }
   }
