@@ -8,3 +8,5 @@ services:
     build: Database/
     ports: 
       - 18080:8080
+    volumes:
+      - ./Database/data:/usr/share/data
