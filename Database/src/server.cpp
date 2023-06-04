@@ -8,6 +8,7 @@
 #include <filesystem>
 #include <regex>
 #include "../include/json.hpp"
+#include "../include/encode.h"
 #include "../Objects/FileTree.hpp"
 #include "../Objects/FileNode.hpp"
 
@@ -36,13 +37,6 @@ std::string read_file(std::string path)
     std::string content((std::istreambuf_iterator<char>(ifs)),
                         (std::istreambuf_iterator<char>()));
     return content;
-}
-
-std::string replace_escape(std::string escape, std::string replace, std::string original)
-{
-    std::regex re(escape);
-
-    return std::regex_replace(original, re, replace);
 }
 
 FileTree *init_tree()
@@ -119,6 +113,17 @@ int main()
         res.write(tree->get_json().dump(4));
         res.end(); });
 
+    CROW_ROUTE(app, "/api/rest/v1/json/query")
+    ([&](const crow::request &req, crow::response &res)
+     {
+        std::string str;
+        auto send_array = json::array();
+        // send_array.push_back(tree->get_file(query)->get_json());
+        // send_array.push_back(tree->get_file("0")->get_json());
+        send_array.push_back(tree->get_json());
+        res.write(to_string(send_array));
+        res.end(); });
+
     CROW_ROUTE(app, "/api/rest/v1/json/query/<string>")
     ([&](const crow::request &req, crow::response &res, std::string query)
      {
@@ -134,18 +139,47 @@ int main()
     CROW_ROUTE(app, "/api/rest/v1/json/create/file/<string>/<string>/<string>")
     ([&](const crow::request &req, crow::response &res, std::string file_name, std::string node_id, std::string content)
      {
-        std::string path = replace_escape("%2F", "/", node_id);
-        std::string new_content = replace_escape("%20", " ", content);
-        new_content = replace_escape("%0D%0A", " \n", new_content);
-        new_content = replace_escape("%0A", "\n", new_content);
+        std::string path = decodeURIComponent(node_id);
+        std::string new_content = decodeURIComponent(content);
         std::cout << new_content << std::endl;
         std::ofstream new_file(path + "/" + file_name);
         new_file << new_content;
         new_file.close();
-        // new_content = replace_escape("")
         json j;
         j["message"] = "Success";
         res.write(to_string(j));
+        res.end(); });
+
+    CROW_ROUTE(app, "/api/rest/v1/json/create/folder/<string>/<string>/<string>")
+    ([&](const crow::request &req, crow::response &res, std::string node_id, std::string parent_id, std::string folder_name)
+     {
+        std::string path = decodeURIComponent(node_id);
+        std::string parent_path = decodeURIComponent(parent_id);
+        std::string name = decodeURIComponent(folder_name);
+
+        std::cout << "new child path: " << path << std::endl; 
+        std::cout << "parent path: " << parent_path << std::endl;
+
+        FileTree* parent_node = tree->get_folder(parent_path);
+
+        json j;
+        if (parent_node != nullptr && tree->get_folder(path) == nullptr) {
+            bool success = std::filesystem::create_directory(path);
+            if (success)
+            { 
+                FileTree* new_node = new FileTree(name, path);
+                parent_node->foldermap_add(new_node->get_nodeID(), new_node);
+                j["message"] = "Success";
+            }
+            else {
+                j["message"] = "Failure";
+            }
+        }
+        else {
+            j["message"] = "Failure";
+        }
+
+        res.write(to_string(j)),
         res.end(); });
 
     // CROW_ROUTE(app, "/api/rest/v1/json/update/<int>/<string>")
@@ -159,10 +193,9 @@ int main()
         if (file != nullptr)
         {
             std::string path = file->get_path();
-            new_content = replace_escape("%20", " ", new_content);
-            new_content = replace_escape("%0D%0A", " \n", new_content);
-            new_content = replace_escape("%0A", "\n", new_content);
-            std::cout << new_content << std::endl;
+            std::cout << "before escapes: " << new_content << std::endl;
+            new_content = decodeURIComponent(new_content);
+            std::cout << "after escapes: " << new_content << std::endl;
             std::ofstream new_file(path);
             new_file << new_content;
             new_file.close();
@@ -211,7 +244,7 @@ int main()
     CROW_ROUTE(app, "/api/rest/v1/json/delete/folder/<string>")
     ([&](const crow::request &req, crow::response &res, std::string node_id)
      {
-        std::string folder_path = replace_escape("%2F", "/", node_id);
+        std::string folder_path = decodeURIComponent(node_id);
         FileTree *folder_to_delete = tree->get_folder(folder_path);
         bool success = false;
         if (folder_to_delete)

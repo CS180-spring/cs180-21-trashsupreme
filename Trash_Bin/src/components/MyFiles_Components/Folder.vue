@@ -5,7 +5,7 @@ import Item from './Item.vue'
 import DeleteButton from '../General_Components/DeleteButton.vue'
 import AddButton from '../General_Components/AddButton.vue'
 import UploadButton from '../General_Components/UploadButton.vue'
-import {sendCreate, sendDelete, sendDeleteFolder} from '../../requests'
+import {sendCreate, sendCreateFolder, sendDelete, sendDeleteFolder} from '../../requests'
     export default defineComponent ({
         props: {
             folder: Types.Folder
@@ -22,7 +22,7 @@ import {sendCreate, sendDelete, sendDeleteFolder} from '../../requests'
             AddButton,
             UploadButton
         },
-        emits: ['delete'],
+        emits: ['delete', 'upload'],
         methods: {
             getItem(event: any) {
                 this.file = event.target.files[0]
@@ -80,16 +80,24 @@ import {sendCreate, sendDelete, sendDeleteFolder} from '../../requests'
             },
             addFolder(currFolder: Types.Folder) {
                 if(this.folder != null) {
-                    this.folder.folders.push(new Types.Folder("New Folder", [], [], true))
+                    this.folder.folders.push(new Types.Folder("New Folder", [], [], true, this.folder.depth + 1))
                     this.isOpen = true
                     this.$forceUpdate()
                 }
+                
             },
             nameFolder() {
-                if (this.folder != null) {
-                    this.folder.isNew = false
-                    this.$forceUpdate()
-                }
+                this.$emit('upload')
+            },
+            submitNewFolder(folder: Types.Folder) {
+                let upload = sendCreateFolder(folder, this.folder)
+                upload.then(() =>  {
+                    if (folder != null) {
+                        folder.isNew = false
+                        // this.folder.nodeID = upload
+                        this.$forceUpdate()
+                    }
+                })
             }
         }
     })
@@ -112,8 +120,8 @@ import {sendCreate, sendDelete, sendDeleteFolder} from '../../requests'
             <input type="file" ref="file" accept=".csv, .tsv, .txt, .json" @change="getItem"/>
             <button @click="addItem">Submit</button>
         </div>
-        <Item v-for="currItem in folder?.items" v-if="isOpen" :item="currItem" @delete="deleteItem(currItem)" />
-        <Folder v-for="currFolder in folder?.folders" v-if="isOpen" :folder="currFolder" @delete="deleteFolder(currFolder)" />  
+        <Item v-for="currItem in folder?.items" v-if="isOpen" :item="currItem" @delete="deleteItem(currItem)"/>
+        <Folder v-for="currFolder in folder?.folders" v-if="isOpen" :folder="currFolder" @delete="deleteFolder(currFolder)" @upload="submitNewFolder(currFolder)" />  
     </div>
 </template>
 
