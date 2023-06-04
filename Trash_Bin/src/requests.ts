@@ -24,7 +24,7 @@ export async function sendQuery(keys: string[], selected: Map<string, string>) {
 }
 
 export async function sendCreate(item: Types.Item, parentFolder: Types.Folder) {
-    let url = baseURL + "create/file/" + encodeURI(item.name) + "/" + encodeURI(parentFolder["nodeID"]).split("/").join("%2F") + "/" + encodeURI(item.content)
+    let url = baseURL + "create/file/" + encodeURIComponent(item.name) + "/" + encodeURIComponent(parentFolder["nodeID"]) + "/" + encodeURIComponent(item.content)
     console.log(url)
     const response = await fetch(url)
     const data = await response.json()
@@ -40,7 +40,7 @@ export async function sendDelete(item: Types.Item) {
 }
 
 export async function sendDeleteFolder(folder: Types.Folder) {
-    let url = baseURL + "delete/folder/" + folder.nodeID.split("/").join("%2F")
+    let url = baseURL + "delete/folder/" + encodeURIComponent(folder.nodeID)
     console.log(url)
     const response = await fetch(url)
     const data = await response.json()
@@ -48,7 +48,7 @@ export async function sendDeleteFolder(folder: Types.Folder) {
 }
 
 export async function sendUpdate(item: Types.Item) {
-    let url = baseURL + "update/" + item.docID + "/" + item.content
+    let url = baseURL + "update/" + item.docID + "/" + encodeURIComponent(item.content)
     console.log(url)
     const response = await fetch(url)
     const data = await response.json()

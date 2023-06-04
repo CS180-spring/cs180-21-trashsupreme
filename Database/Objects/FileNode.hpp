@@ -8,6 +8,7 @@
 #include <chrono>
 #include <cassert>
 #include <unordered_map>
+#include "../include/encode.h"
 
 using namespace std;
 using json = nlohmann::json;
@@ -39,7 +40,7 @@ namespace file
       }
       std::string substring = this->filename;
       std::string extension;
-      extension = substring.substr(substring.find("."));
+      extension = substring.substr(substring.find(".") + 1);
 
       return extension;
     }
@@ -91,6 +92,7 @@ namespace file
       std::ifstream ifs(path);
       std::string content((std::istreambuf_iterator<char>(ifs)),
                           (std::istreambuf_iterator<char>()));
+      // return encodeURIComponent(content);
       return content;
     }
 
