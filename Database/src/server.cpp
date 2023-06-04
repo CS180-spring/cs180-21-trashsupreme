@@ -39,13 +39,6 @@ std::string read_file(std::string path)
     return content;
 }
 
-std::string replace_escape(std::string escape, std::string replace, std::string original)
-{
-    std::regex re(escape);
-
-    return std::regex_replace(original, re, replace);
-}
-
 FileTree *init_tree()
 {
     int folder_index = 1;
@@ -146,16 +139,12 @@ int main()
     CROW_ROUTE(app, "/api/rest/v1/json/create/file/<string>/<string>/<string>")
     ([&](const crow::request &req, crow::response &res, std::string file_name, std::string node_id, std::string content)
      {
-        std::string path = replace_escape("%2F", "/", node_id);
-        std::string new_content = replace_escape("%20", " ", content);
-        // new_content = replace_escape("%0D%0A", " \n", new_content);
-        // new_content = replace_escape("%0A", "\n", new_content);
-        new_content = decodeURIComponent(new_content);
+        std::string path = decodeURIComponent(node_id);
+        std::string new_content = decodeURIComponent(content);
         std::cout << new_content << std::endl;
         std::ofstream new_file(path + "/" + file_name);
         new_file << new_content;
         new_file.close();
-        // new_content = replace_escape("")
         json j;
         j["message"] = "Success";
         res.write(to_string(j));
@@ -172,9 +161,6 @@ int main()
         if (file != nullptr)
         {
             std::string path = file->get_path();
-            // new_content = replace_escape("%20", " ", new_content);
-            // new_content = replace_escape("%0D%0A", " \n", new_content);
-            // new_content = replace_escape("%0A", "\n", new_content);
             std::cout << "before escapes: " << new_content << std::endl;
             new_content = decodeURIComponent(new_content);
             std::cout << "after escapes: " << new_content << std::endl;
@@ -226,7 +212,6 @@ int main()
     CROW_ROUTE(app, "/api/rest/v1/json/delete/folder/<string>")
     ([&](const crow::request &req, crow::response &res, std::string node_id)
      {
-        // std::string folder_path = replace_escape("%2F", "/", node_id);
         std::string folder_path = decodeURIComponent(node_id);
         FileTree *folder_to_delete = tree->get_folder(folder_path);
         bool success = false;
