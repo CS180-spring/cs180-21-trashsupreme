@@ -1,6 +1,7 @@
 #ifndef ENCODE_H_
 #define ENCODE_H_
 
+// from https://gist.github.com/arthurafarias/56fec2cd49a32f374c02d1df2b6c350f#file-encode-h
 #include <string>
 #include <regex>
 #include <iostream>

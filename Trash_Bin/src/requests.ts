@@ -31,6 +31,18 @@ export async function sendCreate(item: Types.Item, parentFolder: Types.Folder) {
     return data
 }
 
+export async function sendCreateFolder(folder: Types.Folder | undefined, parentFolder: Types.Folder | undefined){
+    let url = baseURL + "create/folder/"
+    if (parentFolder != undefined && folder != undefined) {
+        folder.nodeID = parentFolder.nodeID + "/" + folder.name
+        url += encodeURIComponent(folder.nodeID) + "/" + encodeURIComponent(parentFolder.nodeID) + "/" + encodeURIComponent(folder.name)
+    }
+    console.log(url)
+    const response = await fetch(url)
+    const data = await response.json()
+    return data
+}
+
 export async function sendDelete(item: Types.Item) {
     let url = baseURL + "delete/file/" + item.docID
     console.log(url)

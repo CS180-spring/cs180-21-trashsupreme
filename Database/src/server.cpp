@@ -150,6 +150,38 @@ int main()
         res.write(to_string(j));
         res.end(); });
 
+    CROW_ROUTE(app, "/api/rest/v1/json/create/folder/<string>/<string>/<string>")
+    ([&](const crow::request &req, crow::response &res, std::string node_id, std::string parent_id, std::string folder_name)
+     {
+        std::string path = decodeURIComponent(node_id);
+        std::string parent_path = decodeURIComponent(parent_id);
+        std::string name = decodeURIComponent(folder_name);
+
+        std::cout << "new child path: " << path << std::endl; 
+        std::cout << "parent path: " << parent_path << std::endl;
+
+        FileTree* parent_node = tree->get_folder(parent_path);
+
+        json j;
+        if (parent_node != nullptr && tree->get_folder(path) == nullptr) {
+            bool success = std::filesystem::create_directory(path);
+            if (success)
+            { 
+                FileTree* new_node = new FileTree(name, path);
+                parent_node->foldermap_add(new_node->get_nodeID(), new_node);
+                j["message"] = "Success";
+            }
+            else {
+                j["message"] = "Failure";
+            }
+        }
+        else {
+            j["message"] = "Failure";
+        }
+
+        res.write(to_string(j)),
+        res.end(); });
+
     // CROW_ROUTE(app, "/api/rest/v1/json/update/<int>/<string>")
     CROW_ROUTE(app, "/api/rest/v1/json/update/<string>/<string>")
     // ([&](const crow::request &req, crow::response &res, int doc_int, std::string new_content)
