@@ -99,24 +99,24 @@ int main()
     crow::App<crow::CORSHandler> app;
     auto &cors = app.get_middleware<crow::CORSHandler>();
     cors.global().allow_credentials().origin("http://localhost:5173");
-    CROW_ROUTE(app, "/api/rest/v1/json/test")
+    CROW_ROUTE(app, "/api/rest/v1/json/test/filesystem")
     ([](const crow::request &req, crow::response &res)
      {
         using recursive_directory_iterator = std::filesystem::recursive_directory_iterator;
-        // std::string myPath = "/project/data";
         std::string myPath = "/usr/share/data";
-        // std::string myPath = "../data";
         std::string ret = "";
         for (const auto &dirEntry : recursive_directory_iterator(myPath))
         {
-            // std::cout << dirEntry.path().string() << std::endl;
             std::cout << dirEntry << std::endl;
             ret += dirEntry.path().string() + '\n';
         }
-        // json j;
-        // j["response"] = "OK";
-        // res.write(to_string(j));
         res.write(ret);
+        res.end(); });
+
+    CROW_ROUTE(app, "/api/rest/v1/json/test/tree")
+    ([&](const crow::request &req, crow::response &res)
+     {
+        res.write(tree->get_json().dump(4));
         res.end(); });
 
     CROW_ROUTE(app, "/api/rest/v1/json/query/<string>")
@@ -143,18 +143,36 @@ int main()
         new_file << new_content;
         new_file.close();
         // new_content = replace_escape("")
-        path += "/" + file_name;
         json j;
         j["message"] = "Success";
         res.write(to_string(j));
         res.end(); });
 
-    CROW_ROUTE(app, "/api/rest/v1/json/update/<int>/<string>")
-    ([](const crow::request &req, crow::response &res, int doc_id, std::string new_doc)
+    // CROW_ROUTE(app, "/api/rest/v1/json/update/<int>/<string>")
+    CROW_ROUTE(app, "/api/rest/v1/json/update/<string>/<string>")
+    // ([&](const crow::request &req, crow::response &res, int doc_int, std::string new_content)
+    ([&](const crow::request &req, crow::response &res, std::string doc_id, std::string new_content)
      {
-        std::cout << "Updating document " << doc_id << " to " << new_doc << '\n';
+        // std::string doc_id = std::to_string(doc_int);
+        file::fileNode *file = tree->get_file(doc_id);
         json j;
-        j["response"] = "success";
+        if (file != nullptr)
+        {
+            std::string path = file->get_path();
+            new_content = replace_escape("%20", " ", new_content);
+            new_content = replace_escape("%0D%0A", " \n", new_content);
+            new_content = replace_escape("%0A", "\n", new_content);
+            std::cout << new_content << std::endl;
+            std::ofstream new_file(path);
+            new_file << new_content;
+            new_file.close();
+
+            j["response"] = "success";
+        }
+        else
+        {
+            j["response"] = "fail";
+        }
         res.write(to_string(j));
         res.end(); });
 
@@ -163,42 +181,55 @@ int main()
      {
         // tree->filemap_remove(doc_id);
         std::cout << "Still under construction: delete file" << std::endl;
-        file::fileNode* file_to_delete = tree->get_file(doc_id);
+        file::fileNode *file_to_delete = tree->get_file(doc_id);
         bool success = false;
-        if (file_to_delete) {
+        json j;
+        if (file_to_delete)
+        {
             std::cout << "Deleting file " << file_to_delete->get_path() << std::endl;
             success = std::filesystem::remove(file_to_delete->get_path());
-            if (success) {
+            if (success)
+            {
+                tree->filemap_remove(doc_id);
                 std::cout << "Successfully deleted " << file_to_delete->get_path() << std::endl;
+                j["response"] = "success";
             }
-            else {
+            else
+            {
                 std::cout << "Failed to delete " << file_to_delete->get_path() << std::endl;
+                j["response"] = "failure";
             }
         }
+        else
+        {
+            j["response"] = "failure";
+        }
 
-        json j;
-        j["response"] = "success";
         res.write(to_string(j));
         res.end(); });
 
     CROW_ROUTE(app, "/api/rest/v1/json/delete/folder/<string>")
     ([&](const crow::request &req, crow::response &res, std::string node_id)
      {
-        std::cout << "TODO: Remove deleted folder from file tree" << std::endl;
         std::string folder_path = replace_escape("%2F", "/", node_id);
-        FileTree* folder_to_delete = tree->get_folder(folder_path);
+        FileTree *folder_to_delete = tree->get_folder(folder_path);
         bool success = false;
-        if(folder_to_delete) {
+        if (folder_to_delete)
+        {
             std::cout << "Deleting folder " << folder_to_delete->get_nodeID() << std::endl;
             success = std::filesystem::remove_all(std::filesystem::path(folder_path));
-            if(success) {
+            if (success)
+            {
+                tree->foldermap_remove(folder_path);
                 std::cout << "Successfully deleted " << folder_path << std::endl;
             }
-            else {
+            else
+            {
                 std::cout << "Failed to delete " << folder_path << std::endl;
             }
         }
-        else {
+        else
+        {
             std::cout << "Folder " << folder_path << " does not exist!" << std::endl;
         }
 
