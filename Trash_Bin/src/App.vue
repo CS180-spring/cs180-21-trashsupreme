@@ -4,17 +4,17 @@ import NavBar from './components/NavBar.vue'
 import Login from './components/Login.vue'
 import Search from './components/Search.vue'
 import MyFiles from './components/MyFiles.vue'
-import SendButton from './components/SendButton.vue'
+import { label, viewport, content } from './tailwindClasses'
 //let asdf: String[] = ["Button 1", "Button 2"]
 export default {
   components: {
     NavBar,
     Login,
     Search,
-    MyFiles,
-    SendButton
+    MyFiles
   },
   data() {return {
+    label, viewport, content, 
     menus: ["Login", "My Files", "Search"],
     currentMenu: "Search"
   }},
@@ -28,18 +28,21 @@ export default {
 
 <template>
   <header>
-  
+    <!--<link rel="stylesheet" href="assets/style.css" />-->
   </header>
 
-  <main>
-    <h1>App</h1>
-    <Search v-if="currentMenu === 'Search'" />
-    <!--
-    <NavBar :labels="menus" @click="changeMenu" />
-    <Login v-if="currentMenu === 'Login'" />
-    <MyFiles v-if="currentMenu === 'My Files'" />
-    -->
-    
+  <main class="bg-primary">
+    <div :class=viewport>
+      <div :class=content>
+        <h1 :class=label>Trash Bin</h1>
+        <Search v-if="currentMenu === 'Search'" />
+        <!--
+          <NavBar :labels="menus" @click="changeMenu" />
+          <Login v-if="currentMenu === 'Login'" />
+          <MyFiles v-if="currentMenu === 'My Files'" />
+        -->
+      </div> 
+    </div>
   </main>
   <!--
   <div id="test">

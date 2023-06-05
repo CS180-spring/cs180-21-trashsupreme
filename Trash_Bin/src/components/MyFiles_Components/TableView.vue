@@ -3,6 +3,7 @@ import { defineComponent } from 'vue';
 import EditableCell from './EditableCell.vue';
 import AddButton from '../General_Components/AddButton.vue';
 import DeleteButton from '../General_Components/DeleteButton.vue'
+import { tr, th, table } from '@/tailwindClasses'
 
 type TableItem = {
     content: string, row: number, column: number
@@ -37,6 +38,7 @@ function condenseTable(table: TableItem[][], delimiter: string) {
 
     export default defineComponent ({
         data() {return {
+            tr, th, table,
             display: [[{content: '', row: 0, column: 0}]],
             row: 0,
             column: 0
@@ -70,7 +72,6 @@ function condenseTable(table: TableItem[][], delimiter: string) {
                 if (this.delimiter != null) {
                     let res = condenseTable(this.display, this.delimiter) //convert table to string
                     this.display = makeTable(res, this.delimiter) //remake table to recalculate indexes
-                    this.$forceUpdate()
                     this.submit()
                 }
             },
@@ -91,17 +92,19 @@ function condenseTable(table: TableItem[][], delimiter: string) {
 </script>
 
 <template>
-    <div v-for="row in display">
-        <span v-for="item in row">
-            <EditableCell 
-                :content="item.content"
-                @submit="(newVal) => submit(newVal, item)"
-                @add-cell="addCell(item)"
-                @delete-cell="deleteCell(item)"
-            />
-        </span>
-        <AddButton @click="addRow(row[0])"/><DeleteButton @click="deleteRow(row[0])"/>
-    </div>
+    <table :class=table>
+        <tr :class=tr v-for="row in display">
+            <th :class=th v-for="item in row">
+                <EditableCell 
+                    :content="item.content"
+                    @submit="(newVal) => submit(newVal, item)"
+                    @add-cell="addCell(item)"
+                    @delete-cell="deleteCell(item)"
+                />
+            </th>
+            <AddButton @click="addRow(row[0])"/><DeleteButton @click="deleteRow(row[0])"/>
+        </tr>
+    </table>
 </template>
 
 <style>

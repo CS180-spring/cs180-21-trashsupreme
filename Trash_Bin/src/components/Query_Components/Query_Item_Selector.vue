@@ -2,8 +2,10 @@
 import { defineComponent } from 'vue';
 import type {Types} from '../../types'
 import AddButton from '../General_Components/AddButton.vue';
+import { input, dropdown } from '@/tailwindClasses';
     export default defineComponent ({
         data() {return {
+            input, dropdown, 
             key: "",
             value: ""
         }},
@@ -29,10 +31,10 @@ import AddButton from '../General_Components/AddButton.vue';
 
 <template>
     <span>
-        <select v-model="key">
+        <select :class=dropdown v-model="key">
             <option v-for="option in options" :key="option">{{ option }}</option>
         </select>
-        <input v-model="value" @keyup.enter="submit">
+        <input :class=input v-model="value" @keyup.enter="submit">
         <AddButton @click="submit"/>
     </span>
 </template>

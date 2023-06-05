@@ -4,8 +4,10 @@ import Query_Item from './Query_Item.vue';
 import Query_Item_Selector from './Query_Item_Selector.vue';
 import {Types} from '../../types'
 import { sendQuery } from '@/requests';
+import { oval_button } from '@/tailwindClasses';
     export default defineComponent ({
         data() {return {
+            oval_button,
             keys: ["name", "extension"], //Hardcoded for now, could be dynamaic
             selected: new Map
         }},
@@ -45,7 +47,7 @@ import { sendQuery } from '@/requests';
     <Query_Item_Selector :options="keys" @submit="(key, value) => addItem(key, value)"/>
     <Query_Item v-for="item in selected" :name="item[0]" :value="item[1]" @delete="selected.delete(item[0])" />
     <div>
-        <button @click="submit">Submit</button>
+        <button @click="submit" :class=oval_button>Submit</button>
     </div>
 </template>
 

@@ -1,8 +1,12 @@
 <script lang="ts">
 import DeleteButton from '../General_Components/DeleteButton.vue'
+import { badge } from '@/tailwindClasses'
 import { defineComponent } from 'vue';
     export default defineComponent ({
         emits:['delete'],
+        data() {return {
+            badge
+        }},
         components: {
             DeleteButton
         },
@@ -14,7 +18,11 @@ import { defineComponent } from 'vue';
 </script>
 
 <template>
-    <div>{{ name }}: {{ value }}  <DeleteButton @click="$emit('delete')" /></div>
+    <div>
+        <span :class=badge>
+            {{ name }}: {{ value }}  <DeleteButton @click="$emit('delete')" />
+        </span>
+    </div>
 </template>
 
 <style>

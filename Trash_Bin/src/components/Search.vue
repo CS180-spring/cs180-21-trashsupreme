@@ -51,7 +51,7 @@ function renderFolder(data: obj, depth: number = 0) {
     let folders: Types.Folder[] = []
     let nodeID: string = data["NodeID"]
     for(let file = 0; file < data["Files"].length; file++) {
-        items.push(new Types.Item(data["Files"][file]["Name"], data["Files"][file]["Extension"], data["Files"][file]["Content"], data["Files"][file]["DocID"], depth + 1))
+        items.push(new Types.Item(data["Files"][file]["Name"], data["Files"][file]["Extension"], decodeURIComponent(data["Files"][file]["Content"]), data["Files"][file]["DocID"], depth + 1))
     }
     for(let folder = 0; folder < data["Folders"].length; folder++) {
         console.log(data["Folders"][folder])
@@ -68,7 +68,7 @@ export default defineComponent ({
         methods: {
             renderFileTree(data: obj[]) {
                 console.log("Building Tree")
-                // data = [tempData, tempData]
+                //data = [tempData]
                 this.data = []
                 for (let folder = 0; folder < data.length; folder++) {
                     this.data.push(renderFolder(data[folder]))
@@ -87,8 +87,10 @@ export default defineComponent ({
 </script>
 
 <template>
-    <h2 @click="renderFileTree([])/*DEBUG*/ ">Search Menu</h2>
-    <Query_Creator @loaded="renderFileTree" />
+    <!--<h2 @click="renderFileTree([])/*DEBUG*/ ">Search Menu</h2>-->
+    <div class="mx-40">
+        <Query_Creator @loaded="renderFileTree" />
+    </div>
     <div v-if="loaded" v-for="folder in data">
         <Result :data="folder"/>
     </div>
