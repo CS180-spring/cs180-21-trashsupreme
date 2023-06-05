@@ -8,6 +8,7 @@
 #include <chrono>
 #include <cassert>
 #include <unordered_map>
+#include "../include/encode.h"
 
 using namespace std;
 using json = nlohmann::json;
@@ -30,6 +31,11 @@ namespace file
         return "Invalid! File doesn't exist!\n";
       }
       return filename;
+    }
+
+    std::string get_stem() {
+      std::filesystem::path temp_path = path;
+      return temp_path.stem();
     }
 
     std::string get_fileExtension()
@@ -91,6 +97,7 @@ namespace file
       std::ifstream ifs(path);
       std::string content((std::istreambuf_iterator<char>(ifs)),
                           (std::istreambuf_iterator<char>()));
+      // return encodeURIComponent(content);
       return content;
     }
 
