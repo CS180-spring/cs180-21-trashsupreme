@@ -33,6 +33,11 @@ namespace file
       return filename;
     }
 
+    std::string get_stem() {
+      std::filesystem::path temp_path = path;
+      return temp_path.stem();
+    }
+
     std::string get_fileExtension()
     {
       if(this == nullptr) { 
