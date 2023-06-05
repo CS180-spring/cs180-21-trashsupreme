@@ -128,11 +128,28 @@ int main()
     ([&](const crow::request &req, crow::response &res, std::string query)
      {
         std::cout << "Query: " << query << std::endl;
-        std::string str;
+        query = decodeURIComponent(query);
+        vector<std::string> items = split(query, "&");
+        std::string name = "";
+        std::string ext = "";
+        FileTree temp_tree("search", "-1");
+        for(auto i: items) {
+            vector<std::string> split_items = split(i, "=");
+            if (split_items.at(0) == "name") {
+                name = split_items.at(1);
+            }
+            else if (split_items.at(0) == "extension") {
+                ext = split_items.at(1);
+            }
+        }
         auto send_array = json::array();
-        // send_array.push_back(tree->get_file(query)->get_json());
-        // send_array.push_back(tree->get_file("0")->get_json());
-        send_array.push_back(tree->get_json());
+        // send_array.push_back(tree->get_json());
+        vector<file::fileNode*> results = tree->search(name, ext);
+        for (auto i: results) {
+            // send_array.push_back(i->get_json());
+            temp_tree.filemap_add(i->get_docID(), i);
+        }
+        send_array.push_back(temp_tree.get_json());
         res.write(to_string(send_array));
         res.end(); });
 

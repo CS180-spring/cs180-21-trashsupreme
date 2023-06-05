@@ -379,6 +379,46 @@ public:
     return ret;
   }
 
+  vector<file::fileNode *> search(std::string name, std::string ext)
+  {
+    vector<file::fileNode *> ret;
+    vector<file::fileNode *> curr;
+    vector<file::fileNode *> children;
+    bool check_name = (name != "");
+    bool check_ext = (ext != "");
+
+    for (auto i: fileMap) {
+      file::fileNode *curr_file = i.second;
+      if (check_name && check_ext) {
+        if (curr_file->get_stem() == name && curr_file->get_fileExtension() == ext) {
+          children.push_back(curr_file);
+        }
+      } 
+      else if (check_name) {
+        if (curr_file->get_stem() == name) {
+          children.push_back(curr_file);
+        }
+      }
+      else if (check_ext) {
+        if (curr_file->get_fileExtension() == ext) {
+          children.push_back(curr_file);
+        }
+      }
+    }
+
+    for (auto i: folderMap) {
+      vector<file::fileNode*> curr_folder = i.second->search(name, ext);
+
+      curr.reserve(curr.size() + curr_folder.size());
+      curr.insert(curr.end(), curr_folder.begin(), curr_folder.end());
+    }
+
+    ret.reserve(curr.size() + children.size());
+    ret.insert(ret.end(), curr.begin(), curr.end());
+    ret.insert(ret.end(), children.begin(), children.end());
+    return ret;
+  }
+
 private:
   std::string name;
   std::string nodeID; // ID for a folder node
