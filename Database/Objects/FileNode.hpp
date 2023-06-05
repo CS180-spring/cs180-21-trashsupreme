@@ -39,7 +39,7 @@ namespace file
       }
       std::string substring = this->filename;
       std::string extension;
-      extension = substring.substr(substring.find("."));
+      extension = substring.substr(substring.find(".") + 1);
 
       return extension;
     }

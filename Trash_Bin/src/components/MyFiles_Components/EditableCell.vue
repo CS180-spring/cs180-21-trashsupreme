@@ -3,9 +3,11 @@ import { defineComponent } from 'vue';
 import {Types} from '../../types'
 import AddButton from '../General_Components/AddButton.vue';
 import DeleteButton from '../General_Components/DeleteButton.vue';
+import { input } from '@/tailwindClasses';
 
     export default defineComponent ({
         data() {return {
+            input,
             editing: false,
             currContent: this.content
         }},
@@ -31,7 +33,7 @@ import DeleteButton from '../General_Components/DeleteButton.vue';
         {{ currContent }} {{'\t'}}
     </span>
     <span v-if="editing">
-        <input v-model="currContent" @keyup.enter="submit"/>
+        <input :class="input" v-model="currContent" @keyup.enter="submit"/>
         <AddButton @click="$emit('addCell')"/><DeleteButton @click="$emit('deleteCell')"/>
     </span>
 </template>
